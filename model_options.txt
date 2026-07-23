@@ -1,0 +1,10 @@
+# LSD options
+TARGET=LSD
+FUN=fun_green_model_v3
+
+# Additional model files
+FUN_EXTRA= ___c_firms.cpp ___k_firms.cpp ___vintage.cpp ___initialization.cpp ___k_sector.cpp ___c_sector.cpp ___hh_sector.cpp ___government.cpp ___market.cpp ___financial.cpp ___sfc.cpp ___order.cpp
+
+# Compiler options
+SWITCH_CC=-O0 -ggdb3
+SWITCH_CC_LNK=

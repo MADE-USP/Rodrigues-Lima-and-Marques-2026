@@ -1,0 +1,463 @@
+/******************************************************************************
+
+	HH_SECTOR OBJECT EQUATIONS
+	----------------------
+
+	Written by Lucca Rodrigues, Made-USP
+
+	Equations that are specific to the households object in the Made-Green model
+	are coded below.
+
+ ******************************************************************************/
+
+/*============================== KEY EQUATIONS ===============================*/
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+// PART 1: LABOR AGGREGATES ------------------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+//-------------------------------------------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+		
+	EQUATION( "labor_force" )
+		/* UNIT: number of workers
+
+		Effective work force (labor) size */
+
+		v[1] = V( "n" );							// population growth rate
+		v[0] = VL("labor_force", 1); 
+
+	RESULT( v[0] * ( 1 + v[1] ) )				// grow population
+
+	EQUATION( "labor_demand")
+		/* UNIT: number of workers
+		
+		Labor demand from K and C firms (both brown and green)*/
+
+		v[1] = VS(k_sector1,  "researchers_k_demand" );	
+		v[2] = VS(k_sector1,  "workers_k_demand" );							
+		v[3] = VS(c_sector1,  "workers_c_demand" );	
+		v[4] = VS(c_sector1,  "managers_c_demand" );
+		v[5] = VS(k_sector1,  "managers_k_demand" );	
+
+		v[10] = v[1] + v[2] + v[3] + v[4] + v[5];
+
+	RESULT( v[10] )
+
+	EQUATION( "labor_restriction")
+		/* UNIT: ratio
+		
+		Labor restriction to be applied uniformelly at all firms*/
+
+		v[0] = V("labor_force") -  (VS(k_sector1, "total_k_firms") + VS(c_sector1, "total_c_firms")) * VS(PARENT, "capitalists_per_firm") - 
+									VS(government1, "researchers_g_employed"); 
+
+		v[1] = V("labor_demand") > v[0] ? v[0] / V("labor_demand")  : 1 ;
+
+	RESULT( v[1] )
+
+
+	EQUATION( "labor_employed" )
+		/* UNIT: number of workers
+
+		Effective work force (labor) size, increase workforce if full employment*/
+
+		v[0] = VS(k_sector1, "researchers_k_employed") + VS(k_sector1, "workers_k_employed") + VS(k_sector1, "managers_k_employed") +
+			   VS(c_sector1, "workers_c_employed") + VS(c_sector1, "managers_c_employed") + VS(government1, "researchers_g_employed");
+
+	RESULT( v[0] )		
+
+
+	EQUATION( "wage" )
+		/*UNIT: monetary units
+		
+		Centralized wage to set the average for all labor.  */
+
+		v[1] = V( "psi_inflation" );								// inflation adjust. parameter
+		v[2] = V( "psi_productivity" );								// general prod. adjust. param.
+		v[3] = V( "psi_unemployment" );								// unemploym. adjust. parameter
+		v[4] = VLS( PARENT, "inflation", 1 );				// current inflation
+		v[5] = VLS( PARENT, "productivity_change", 1 );					// general productivity variat.
+		v[6] = VL( "unemployment_change", 1 );							// unemployment variation
+
+		v[0] = VL("wage", 1) * ( 1 + v[1] * v[4] + v[2] * v[5] + v[3] * v[6] );
+
+		v[10] = (v[0] - VL("wage", 1))/ VL("wage", 1);
+
+		WRITE("wage_demand_growth", v[10]);
+
+		v[11] = max( v[0], V( "wage_min" ) ) // ensure subsistence level
+
+	RESULT( v[0] )	
+
+	EQUATION( "wage_sensitivity_hh")
+		/*UNIT: percentage
+		
+		Calculates workers bargaining power (endogenous)*/
+
+		v[0] = V( "wage_sensitivity" ) * (1 - VL("unemployment_rate", 1));
+
+		v[1] = max(0 ,min(v[0], 1));
+
+	RESULT(v[1])		
+
+
+	EQUATION( "wage_min" )
+		/*UNIT: monetary units
+		
+		Minimum wage only updated by inflation.  */
+
+		v[1] = V( "psi_inflation" );								// inflation adjust. parameter
+		v[4] = VLS( PARENT, "inflation", 1 );				// current inflation
+
+		v[0] = VL("wage_min", 1) * ( 1 + v[1] * v[4] );
+
+	RESULT( v[0] )					
+
+
+	EQUATION( "wage_unemployed" )
+		/*UNIT: monetary units
+		
+		Unemployment benefit ("wage") paid by government */
+
+		v[0] = VS(government1,  "wage_unemployed_discount" ) * V( "wage" );
+
+		v[1] = max( v[0], V( "wage_min" ) );
+
+	RESULT( v[1] )
+
+
+	EQUATION( "wage_bill" )
+		/*UNIT: monetary units
+		
+		Total wage bill paid by firms */
+
+		v[0] = VS(k_sector1, "cost_workers_k") + VS(c_sector1, "cost_workers_c") + 
+			   VS(k_sector1, "cost_managers_k") + VS(c_sector1, "cost_managers_c") +
+			   VS(k_sector1, "research_cost_k") + VS(government1, "researchers_cost_g");  //wages paid to all workers
+
+	RESULT( v[0] )
+
+
+	EQUATION( "dividends" )
+		/*UNIT: monetary units
+		
+		Total dividends (distributed profits) received by households */
+
+		v[0] = VS(k_sector1, "profits_distributed_k") + VLS(c_sector1, "profits_distributed_c", 1); // FOR C FIRMS HAS TO BE LAGGED OR DEADLOCK
+
+	RESULT( v[0] )	
+
+
+	EQUATION( "unemployed_income")	
+		/*UNIT: monetary units
+		
+		Total dunemployment benefits received from the government */
+
+		v[0] = V("wage_unemployed") * (V( "labor_unemployed" ) ); 
+
+	RESULT( v[0] )	
+
+	EQUATION( "labor_unemployed")	
+		/*UNIT: number of workers
+		
+		Total unemployed workers */
+
+		v[0] = V( "labor_force" ) - V( "labor_employed" ) -
+			   (VS(k_sector1, "total_k_firms") + VS(c_sector1, "total_c_firms")) * VS(PARENT, "capitalists_per_firm"); 
+
+	RESULT( v[0] )	
+
+
+	EQUATION( "capitalists")	
+		/*UNIT: number of workers
+		
+		Total unemployed workers */
+
+		v[0] = (VS(c_sector1, "total_c_firms") + VS(k_sector1, "total_k_firms")) * VS(PARENT, "capitalists_per_firm"); 
+
+	RESULT( v[0] )	
+
+
+	EQUATION( "dividends_taxes" )
+		/*UNIT: monetary units
+		
+		Total taxes paid from dividends */
+
+		v[0] = VS(government1, "dividends_tax_rate") * V("dividends"); 
+
+	RESULT( v[0] )		
+
+
+	EQUATION( "wage_taxes" )
+		/*UNIT: monetary units
+		
+		Total taxes paid from wages */
+
+		v[0] = VS(government1, "wage_tax_rate") * V("wage_bill"); 
+
+	RESULT( v[0] )	
+
+	EQUATION( "total_taxes_hh" )
+		/*UNIT: monetary units
+		
+		Total taxes paid from households */
+
+		v[0] = V("wage_taxes") + V("dividends_taxes");
+
+	RESULT( v[0] )	
+
+
+	EQUATION("income_total_hh")
+		/*UNIT: monetary units
+		
+		Total pre tax income of households */
+
+		v[0] = V("wage_bill") + V("dividends") + V("unemployed_income") + //households income (workers + capitalists + unemployed)
+				VS(government1, "green_basic_income_cost") + VS(government1, "green_transfer_cost"); 
+
+	RESULT( v[0] )
+
+
+	EQUATION("income_disposable_hh")
+		/*UNIT: monetary units
+		
+		Total disposable income of households after taxes paid*/
+
+		v[0] = V("income_total_hh") - V("wage_taxes") - V("dividends_taxes"); 
+
+	RESULT( v[0] )
+
+
+	EQUATION("demand_consumption_hh")
+		/*UNIT: monetary units
+		
+		Total household consumption from wages and dividends*/
+
+		v[1] = V("propensity_consume_wage");
+		v[2] = V("propensity_consume_dividends");
+
+		v[3] = v[1] * ( V("wage_bill") - V("wage_taxes") +  V("unemployed_income") 
+						+ VS(government1, "green_basic_income_cost") + VS(government1, "green_transfer_cost"));  	// workers consumption
+		v[4] = v[2] * ( V("dividends") - V("dividends_taxes") );	// capitalists consumption
+		v[5] = v[3] + v[4]; 										// total HH consumption
+
+		v[6] = V("income_disposable_hh"); 
+		v[7] = v[5] / v[6]; 										// effective propensity to consume from HH income
+		WRITE("propensity_consume_income", v[7])
+
+	RESULT( v[5] )
+
+
+	EQUATION("consumption_realized_hh") 
+		/* UNIT: monetary units
+	
+		Realized nominal consumption by HH		*/
+
+		v[2] =V("demand_consumption_hh") / V("demand_c_nominal");
+
+		v[3] = VS(c_sector1, "sales_c_nominal");
+
+		v[4] = v[2] * v[3]; // total resources spent by the household on consumption
+
+	RESULT( v[4] )
+
+
+	EQUATION( "unemployment_rate" )
+		/*UNIT: rate
+		
+		Unemployment rate */
+
+		v[0] = V( "labor_unemployed" ) / V( "labor_force" )
+
+	RESULT( v[0]  )
+
+
+	EQUATION( "unemployment_change" )
+		/*UNIT: rate
+		
+		Unemployment change rate */
+
+		v[0] = (V("unemployment_rate") == 0) ? 0: ( (V("unemployment_rate") - VL("unemployment_rate", 1)) / VL("unemployment_rate", 1) );
+
+	RESULT( v[0] )
+
+	EQUATION("deposits_hh") 
+		/* UNIT: monetary units
+
+		Stock of savings */
+
+		v[0] = VL("deposits_hh", 1);
+		v[1] = V("income_total_hh");
+
+		v[4] = v[0] + v[1]; // total resources available
+
+		v[5] = V("consumption_realized_hh"); 
+		v[6] = V("wage_taxes") + V("dividends_taxes");
+
+		v[10] = v[4] - v[5] - v[6]; // deposits left
+
+		v[11] = v[10] / VS(PARENT, "nominal_output");
+
+		WRITE("deposits_hh_over_gdp", v[11]);
+
+	RESULT( v[10] )
+
+	EQUATION_DUMMY("deposits_hh_over_gdp", "deposits_hh")
+
+	RESULT( v[10] )
+
+
+	EQUATION("dividends_wage_ratio")
+		/*UNIT: monetary units
+		
+		Average wage of direct workers in C sector*/
+
+		v[0] = V("wage_bill") / V("labor_employed");
+		v[1] = V("dividends") / V("capitalists");
+		v[2] = v[1]/v[0];
+
+	RESULT(v[2])	
+
+
+		
+	EQUATION_DUMMY("wage_demand_growth", "wage")
+	
+
+	EQUATION( "gini_hh" )
+		/* UNIT: index
+
+			Gini index including all households income */
+
+double _wage_c, _workers_c_employed, _managers_wage_c, _managers_c_employed, _dividends_c, 
+	   _wage_k, _workers_k_employed, _managers_wage_k, _managers_k_employed, _dividends_k,
+	   _research_wage_k, _researchers_k_employed,
+	   wage_unemployed, labor_unemployed, capitalists_per_firm,
+	   research_wage_g, researchers_g_employed,
+	   _income, income, _households, households,
+	   rank2InSum, InRank2Sum, gini;
+
+int agtN;
+
+agtN = V("labor_force");
+												// number of worker+firm agents
+double *rank2 = new double[ agtN ];				// allocate space for indiv. rank
+
+agtN = 0;
+income = households  = 0;
+
+capitalists_per_firm = VS(PARENT, "capitalists_per_firm");
+
+v[20] = VS(government1, "green_basic_income");
+v[30] = VS(government1, "green_transfer");
+
+CYCLES( c_sector1, cur, "c_firms" )				// consider all firms (== for workers distribution since wage are firm specific)
+{
+	_wage_c = VS( cur, "_wage_c" ) + v[20] + v[30];						
+	_workers_c_employed = VS(cur, "_workers_c_employed"); //number of workers that recieve this wage
+
+	for ( int worker = 0; worker <= _workers_c_employed ; ++worker )
+		rank2[ agtN++ ] = _wage_c;					// insert income in rank array as many times as there are workers in the firm
+
+	_managers_wage_c = VS( cur, "_managers_wage_c" ) + v[20];				
+	_managers_c_employed = VS(cur, "_managers_c_employed"); //number of managers that recieve this wage		
+
+	for ( int manager = 0; manager <= _managers_c_employed ; ++manager )
+		rank2[ agtN++ ] = _managers_wage_c;					// insert income in rank array as many times as there are managers in the firm
+
+	_dividends_c = VS( cur, "_dividends_c" ) * (1- VS(government1, "dividends_tax_rate")) + v[20];				
+
+	for ( int capitalist = 0; capitalist <= capitalists_per_firm ; ++capitalist )
+		rank2[ agtN++ ] = _dividends_c;					// insert income in rank array as many times as there are capitalists in the firm
+
+	_income = _wage_c * _workers_c_employed
+				+ _managers_wage_c * _managers_c_employed 
+				+ _dividends_c * capitalists_per_firm; 
+	
+	income += _income;								// sum of income
+
+	_households = _workers_c_employed + _managers_c_employed + capitalists_per_firm;
+	households += _households;
+}
+
+CYCLES( k_sector1, cur, "k_firms" )				// consider all firms (== for workers distribution since wage are firm specific)
+{
+	_wage_k = VS( cur, "_wage_k" ) + v[20] + v[30];						
+	_workers_k_employed = VS(cur, "_workers_k_employed"); //number of workers that recieve this wage
+
+	for ( int worker = 0; worker <= _workers_k_employed ; ++worker )
+		rank2[ agtN++ ] = _wage_k;					// insert income in rank array as many times as there are workers in the firm
+
+	_managers_wage_k = VS( cur, "_managers_wage_k" ) + v[20];				
+	_managers_k_employed = VS(cur, "_managers_k_employed"); //number of managers that recieve this wage		
+
+	for ( int manager = 0; manager <= _managers_k_employed ; ++manager )
+		rank2[ agtN++ ] = _managers_wage_k;					// insert income in rank array as many times as there are managers in the firm
+
+
+	_research_wage_k = VS( cur, "_research_wage_k" ) + v[20];				
+	_researchers_k_employed = VS(cur, "_researchers_k_employed"); //number of managers that recieve this wage	
+
+	for ( int researcher = 0; researcher <= _researchers_k_employed ; ++researcher )
+		rank2[ agtN++ ] = _research_wage_k;					// insert income in rank array as many times as there are researchers in the firm
+
+	_dividends_k = VS( cur, "_dividends_k" ) * (1- VS(government1, "dividends_tax_rate")) + v[20];				
+
+	for ( int capitalist = 0; capitalist <= capitalists_per_firm ; ++capitalist )
+		rank2[ agtN++ ] = _dividends_k;					// insert income in rank array as many times as there are capitalists in the firm
+
+	_income = _wage_k * _workers_k_employed 
+				+ _managers_wage_k * _managers_k_employed 
+				+ _research_wage_k * _researchers_k_employed 
+				+ _dividends_k * capitalists_per_firm; 
+
+	income += _income;								// sum of income
+
+	_households = _workers_k_employed + _managers_k_employed + _researchers_k_employed + capitalists_per_firm;
+	households += _households;
+}
+
+wage_unemployed = V("wage_unemployed") + v[20] + v[30];
+labor_unemployed = V("labor_unemployed");
+
+for( int unemployed = 0; unemployed <= labor_unemployed; ++unemployed )
+	rank2[ agtN++ ] = wage_unemployed;
+
+_income = wage_unemployed * labor_unemployed; 
+income += _income;								// sum of income
+
+research_wage_g = V("research_wage_g") + v[20];
+researchers_g_employed = V("researchers_g_employed");
+
+for( int researcher = 0; researcher <= researchers_g_employed; ++researcher )
+	rank2[ agtN++ ] = research_wage_g;
+
+_income = research_wage_g * researchers_g_employed; 
+income += _income;								// sum of income
+
+households += labor_unemployed;
+
+v[10] = abs ( (households - V("labor_force")) / V("labor_force") );
+
+if(v[10] > 0.01 ) LOG("\n -> WARNING: error gini sum of households to %.2lf in time %.0lf", v[10], T);
+
+v[11] = abs ( (income - V("income_total_hh")) / V("income_total_hh") );
+
+//if(v[11] > 0.01 ) LOG("\n -> WARNING: error gini sum of income to %.2lf in time %.0lf", v[10], T);
+
+// apply the Jasso-Deaton formula
+sort( rank2, rank2 + agtN, greater < double > ( ) );
+
+for ( rank2InSum = InRank2Sum = k = 0; k < agtN; ++k )
+{
+	rank2InSum += ( k + 1 ) * rank2[ k ];
+	InRank2Sum += rank2[ k ];
+}
+
+if ( agtN > 1 && InRank2Sum > 0 )
+	gini = ( double ) ( agtN + 1 ) / ( agtN - 1 ) -
+		   2 * rank2InSum / ( ( agtN - 1 ) * InRank2Sum );
+else
+	gini = 0;
+
+delete [] rank2;
+
+RESULT( gini )

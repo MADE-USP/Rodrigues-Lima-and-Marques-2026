@@ -1,0 +1,92 @@
+//#define EIGENLIB			// uncomment to use Eigen linear algebra library
+
+#include "fun_head_fast.h"
+
+/*============================= GENERAL CLASSES ==============================*/
+
+typedef pair < int, object * > firmPairT;		// firm-to-object pair template
+typedef map < int, object * > firmMapT;			// firm-to-object map template
+typedef set < object * > firmSeT;				// firm-set template
+typedef vector < double > dblVecT;				// vector of doubles template
+typedef vector < object * > objVecT;			// vector of objects template
+
+
+/*======================== COUNTRY EXTENSION CLASS ===========================*/
+
+struct countryE
+{
+	// static global pointers to speed-up the access to individual containers
+	object *c_sector, *k_sector, *hh_sector, *government, *market, *financial; 
+	
+	// country speed-up vectors & maps
+	objVecT firmCptr;							// pointers to firms in consumption sector
+	firmMapT firmCmap;							// ID to pointer map for consumption sector
+	typedef vector < double > dblVecT;				// vector of doubles template
+};
+
+#define c_sector0 V_EXT( countryE, c_sector )
+#define c_sector1 V_EXTS( PARENT, countryE, c_sector )
+#define c_sector2 V_EXTS( GRANDPARENT, countryE, c_sector )
+#define k_sector0 V_EXT( countryE, k_sector )
+#define k_sector1 V_EXTS( PARENT, countryE, k_sector )
+#define k_sector2 V_EXTS( GRANDPARENT, countryE, k_sector )
+#define hh_sector0 V_EXT( countryE, hh_sector )
+#define hh_sector1 V_EXTS( PARENT, countryE, hh_sector )
+#define hh_sector2 V_EXTS( GRANDPARENT, countryE, hh_sector )
+#define government0 V_EXT( countryE, government )
+#define government1 V_EXTS( PARENT, countryE, government )
+#define government2 V_EXTS( GRANDPARENT, countryE, government )
+#define financial0 V_EXT( countryE, financial )
+#define financial1 V_EXTS( PARENT, countryE, financial )
+#define financial2 V_EXTS( GRANDPARENT, countryE, financial )
+
+//ps: the number after the pointer refer to the level of the object calling it.
+//the 0 stands for the market, the 1 for the sector and the 2 for the firms.
+
+#include "___support_functions.cpp"
+
+#define ROUND( V, Ref, Tol ) ( abs( V - Ref ) > Tol ? V : Ref )
+
+MODELBEGIN
+
+// insert your equations here, ONLY between the MODELBEGIN and MODELEND words
+
+
+#include "___k_firms.cpp"
+#include "___k_sector.cpp"
+#include "___c_firms.cpp"
+#include "___vintage.cpp"
+#include "___initialization.cpp"
+#include "___c_sector.cpp" 
+#include "___hh_sector.cpp" 
+#include "___government.cpp" 
+#include "___market.cpp" 
+#include "___financial.cpp" 
+#include "___sfc.cpp"
+#include "___order.cpp" 
+
+
+/*========================= INITIALIZATION EQUATIONS =========================*/
+
+EQUATION( "init" )
+
+PARAMETER;										// execute only once
+
+DEFAULT_RESULT( NAN );							// default equation result
+USE_SAVED;										// allow access to saved vars
+USE_ZERO_INSTANCE;								// allow zero-instance objects
+
+
+	V( "initialization" );					// initialize country
+
+RESULT( 1 )
+
+
+MODELEND
+
+// do not add Equations in this area
+
+void close_sim( void )
+{
+	// close simulation special commands go here
+}

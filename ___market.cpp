@@ -1,0 +1,479 @@
+/******************************************************************************
+
+	MARKET OBJECT EQUATIONS
+	----------------------
+
+	Written by Lucca Rodrigues, Made-USP
+
+	Equations that are specific to the market (country aggregate) object in the Made-Green model
+	are coded below.
+
+ ******************************************************************************/
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+// PART 1: CONSUMPTION GOODS MARKET ---------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+//-------------------------------------------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+		
+
+ 	EQUATION("demand_c_nominal")
+		/* UNIT: monetary unit
+
+		Sum of demand for goods from all classes (before market shares are calculated) */
+
+		v[0] = V("demand_consumption_hh");
+		v[1] = V("demand_consumption_government");
+
+	RESULT( v[0] + v[1] )
+	
+
+	EQUATION("demand_c_real") 
+		/* UNIT: number of goods
+
+		Real aggregate demand for consumption goods */
+
+		v[0] = V("demand_c_nominal");
+
+		v[1] = V("price_c_average_before_sales");
+
+		v[2] = v[0] / v[1];
+
+	RESULT( v[2] )	
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+// PART 2: GDP  ---------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+//-------------------------------------------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+		
+
+ 	EQUATION("gdp_nominal") 
+		/* UNIT: monetary units
+
+		GDP in nominal terms from the income approach */
+
+		v[0] = V("wage_bill"); // aggregate wages in the private sector
+		v[1] = V("profits_gross_nominal"); // aggregate profits (pre-interest deductibility)
+		v[2] = V("taxes_sales"); // aggregate indirect taxes
+
+		v[20] = v[0] + v[1] + v[2];
+
+	RESULT( v[20] )
+
+	EQUATION("gdp_nominal_demand_approach")
+		/* UNIT: monetary units
+
+		GDP in nominal terms from the demand approach (demand for goods produced in the domestic sector) */
+		
+			v[21] = VS(k_sector0, "sales_k_nominal");
+			
+			v[22] = VS(k_sector0, "sales_c_nominal"); // HH and Government consumption for goods produced by the domestic sector
+			v[23] = 0;// counter of nominal inventories change
+
+			CYCLES(c_sector0, cur, "c_firms")
+			{
+				v[40] = VS(cur, "_cost_unit_production_c"); // unit production costs in the period
+				v[41] = ( VS(cur, "_inventories_c") - VLS(cur, "_inventories_c", 1) ); // change in units of inventories (real)
+				v[42] = v[40] * v[41]; // change in value inventories (only the change associated with a production flow)
+
+				v[23] += v[42]; // change in nominal inventories is updated
+			}
+
+		// GDP from demand approach
+			v[1] = v[21] + v[22] + v[23] ; // sum of demand variables: C, G, I (change in K stock and change in Inventories)
+
+	RESULT( v[1] )
+
+	EQUATION("gdp_real")
+		/* UNIT: real value
+
+		real GDP from production approach */
+
+		V("production_c_nominal");
+
+		v[0] = V("production_k");
+		v[1] = V("production_c_real");
+
+		v[3] = v[0] + v[1];
+
+	RESULT( v[3] )
+
+	EQUATION("gdp_real_demand_approach")
+		/* UNIT: real value
+
+		real GDP from demand approach */
+
+		v[0] = V( "investment_realized_c");
+
+		v[1] = V( "inventories_c_real_change");
+
+		v[2] = V( "sales_c_real");
+
+		v[4] = v[0] + v[1] + v[2];
+
+	RESULT( v[4] )
+
+	EQUATION("profits_gross_nominal") 
+		/* UNIT: monetary units
+
+		Aggregate profits from accounting point of view in national accounts (see Godley and Lavoie 2012 page 262)*/
+
+		v[0] = SUMS(c_sector0, "_profits_gross_c");
+		v[1] = SUMS(k_sector0, "_profits_gross_k");
+
+		v[2] = v[0] + v[1];
+
+	RESULT( v[2] )	
+
+	EQUATION("gdp_growth")
+		/* UNIT: rate
+
+		Growth rate of real output */
+
+		v[0] = V("gdp_real");
+		v[1] = VL("gdp_real", 1);
+
+		v[2] = (v[1] == 0)? 0: ( v[0] / v[1] ) - 1;
+
+	RESULT(v[2])
+
+		EQUATION("nominal_gdp_growth")
+		/* UNIT: rate
+
+		Growth rate of real output */
+
+		v[0] = V("gdp_nominal");
+		v[1] = VL("gdp_nominal", 1);
+
+		v[2] = (v[1] == 0)? 0: ( v[0] / v[1] ) - 1;
+
+	RESULT(v[2])
+
+	EQUATION("investment_growth")
+	/* UNIT: rate
+
+	Growth rate of net investment */
+
+	v[0] = V("investment_realized_net_c");
+	v[1] = VL("investment_realized_net_c", 1);
+
+	v[2] = (v[1] == 0)? 0: ( v[0] / v[1] ) - 1;
+
+RESULT(v[2])
+
+EQUATION("consumption_growth")
+/* UNIT: rate
+
+Growth rate of consumption */
+
+v[0] = V("production_c_real");
+v[1] = VL("production_c_real", 1);
+
+v[2] = (v[1] == 0)? 0: ( v[0] / v[1] ) - 1;
+
+RESULT(v[2])
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+// PART 3: COUNTRY AGGREGATES ---------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+//-------------------------------------------------------------------------------------------------------------------------------------------------===================================================================================================================================================
+		
+
+	EQUATION("cpi") 
+		/* UNIT: index
+
+		Consumer Price Index  */
+
+		v[0] = VS(c_sector0, "price_c_average_consumer"); // current price level for C goods
+		v[1] = V("cpi_base"); // base price level
+
+		v[2] = v[0] / v[1]; // price index with respect to the price in the base period
+
+	RESULT( v[2] )
+
+	EQUATION("cpi_base")
+		/* UNIT: index
+
+		Updates the price level in the first period (will become a parameter after t=1) */
+
+		v[0] = VS(c_sector0, "price_c_average_consumer");
+
+		PARAMETER;
+
+	RESULT( v[0] )	
+	
+	EQUATION("inflation") 
+		/* UNIT: decimals
+
+		Consumer price inflation */
+
+		v[0] = V("cpi"); // current price index
+		v[1] = VL("cpi", 1); // previous period price index
+
+		v[2] = (v[1] == 0)? 0: (v[0] - v[1]) / v[1];
+
+	RESULT( v[2] )	
+
+	EQUATION("inflation_change")
+		/*UNIT: rate
+		
+		Average Productivity growth rate*/
+
+		v[0] = (VL("inflation", 1) == 0) ? 0: ( (V("inflation") - VL("inflation", 1)) / VL("inflation", 1) );
+
+	RESULT( v[0] )	
+
+
+	EQUATION("inflation_average") 
+		/* UNIT: decimals
+
+		Consumer price inflation average (used for IT regime) */
+
+		v[0] = V("it_regime_periods");
+
+		int _i;
+		int _j;
+
+		for( _i = 0, _j = v[0], v[1] = 1, v[2] = 0; _i < _j; _i++ )
+		{
+			if( t - 1 - _i > 0 ) // guarantee that inflation was calculated in this period (in the first period, it does not count because inflation is equal to zero by definition)
+			{
+				v[1] = v[1] * ( 1 + VL("inflation", _i) );
+				v[2] ++;
+			}
+		}
+
+		v[3] = v[2] > 0 ? pow( v[1] , 1/v[2] ) - 1 : 0;
+
+	RESULT( v[3] )
+
+
+	EQUATION("unemployment_rate_average") 
+	/* UNIT: decimals
+
+	Unemployment rate (used for IT regime) */
+
+	v[0] = V("it_regime_periods");
+
+	int _i;
+	int _j;
+
+	for( _i = 0, _j = v[0], v[1] = 0, v[2] = 0; _i < _j; _i++ )
+	{
+		if( t - 1 - _i > 0 ) // guarantee that inflation was calculated in this period (in the first period, it does not count because inflation is equal to zero by definition)
+		{
+			v[1] += VL("unemployment_rate", _i);
+			v[2] ++;
+		}
+	}
+
+	v[3] = v[2] > 0 ? v[1] / v[2] : 0;
+
+	RESULT( v[3] )
+
+	EQUATION("productivity_avg")
+		/*UNIT: goods per workers
+		
+		Average labor productivy in the economy (Total Labor Productivity)*/
+
+		v[0] = V("gdp_real") / V("labor_employed");
+
+	RESULT( v[0] )
+
+
+	EQUATION("productivity_change")
+		/*UNIT: rate
+		
+		Average Productivity growth rate*/
+
+		v[0] = (V("productivity_avg") == 0) ? 0: ( (V("productivity_avg") - VL("productivity_avg", 1)) / VL("productivity_avg", 1) );
+
+	RESULT( v[0] )
+
+
+	EQUATION("wage_share")
+		/*UNIT: rate
+		
+		Wage bill over nominal GDP*/
+
+		v[0] = V("wage_bill") / V("gdp_nominal");
+
+	RESULT( v[0] )
+
+	EQUATION("profit_share")
+		/*UNIT: rate
+		
+		Wage bill over nominal GDP*/
+
+		v[0] = V("profits_gross_nominal") / V("gdp_nominal");
+
+	RESULT( v[0] )
+	
+
+
+	EQUATION("loans_to_gdp")
+		/*UNIT: rate
+		
+		Wage bill over nominal GDP*/
+
+		v[0] = V("bank_loans") / V("gdp_nominal");
+
+	RESULT( v[0] )	
+
+
+	EQUATION("emissions")
+		/*UNIT: tons of CO2 
+		
+		Aggregate emissions in the economy*/
+
+		v[0] = V("emissions_k") + V("emissions_c");
+	
+		v[1] = v[0] / ( 3.664 * 1e6 );
+
+		if ( T == V( "tA0" ) )							// starting climate variables?
+			WRITE( "emissions_0", v[1] );						// save reference period emissions
+
+	RESULT( v[0] )
+
+	EQUATION("consumption_growth")
+/* UNIT: rate
+
+Growth rate of emissions */
+
+v[0] = V("emissions");
+v[1] = VL("emissions", 1);
+
+v[2] = (v[1] == 0)? 0: ( v[0] / v[1] ) - 1;
+
+RESULT(v[2])
+
+
+	EQUATION("carbon_concentrarion")
+		/*UNIT: tons of CO2
+		
+		Concentration of CO2 in the atmosphere*/
+
+		v[0] = CURRENT + V("emissions")
+
+	RESULT( v[0] )
+
+	EQUATION( "damage_shock_productivity")
+		/*UNIT: irrelevant
+		
+		Establish the environmental shock in the period */
+
+		v[0] = VL("emissions_coefficient", 1); // total emissions
+		v[1] = VS(PARENT, "damage_easiness"); // parameter indicating how easy it is for firms to innovate
+
+		v[2] = 1-exp(-v[1] * v[0]); // probability in success in innovating
+
+		v[3] = bernoulli( v[2] ); // bernoulli draw
+
+
+		if(v[3] == 1) // if damage
+		{
+			
+			v[20] = V( "damage_alpha");
+			v[30] = V( "damage_beta");
+			v[40] = - V( "damage_inf"); // lower beta damage draw support
+			v[50] = V( "damage_sup"); // upper beta damage draw support
+
+			v[60] = beta(v[20], v[30]); // beta draw
+
+			v[70] = (1 - v[40] - v[60] * (v[50] - v[40]) );
+			  
+		}
+		else // if did not innovate
+		{
+			v[70] = 1;
+		}
+
+
+	RESULT( v[70] )
+
+	
+	EQUATION( "emissions_coefficient")
+	/*UNIT: tons of CO2 per output
+		
+		Aggregate emissions coefficient in the economy*/
+
+		v[0] = V("emissions") / V("gdp_real") ;
+
+	RESULT( v[0] )
+
+
+
+	EQUATION("shock")
+		/*UNIT: irrelevant
+		
+		Experiments shocks*/
+
+		if(T == 100){
+
+			if(V("flag_scenario2") == 1){
+			
+			WRITES(government0, "flag_carbon_tax", 1);
+
+			}
+
+			if(V("flag_scenario3") == 1){
+			
+			WRITES(government0, "flag_carbon_tax", 1);
+			WRITES(government0, "flag_green_lab", 1);
+			WRITELS(government0, "green_productivity_g" , MAXS( k_sector0, "_green_productivity_k" ), 1);
+
+			}
+
+			if(V("flag_scenario4") == 1){
+			
+			WRITES(government0, "flag_carbon_tax", 1);
+			WRITES(government0, "flag_green_price_subsidies", 1);
+			}
+
+			if(V("flag_scenario5") == 1){
+			
+			WRITES(government0, "flag_carbon_tax", 1);
+			WRITES(government0, "flag_green_research_subsidies", 1);
+			}
+
+			if(V("flag_scenario6") == 1){
+			
+			WRITES(government0, "flag_carbon_tax", 1);
+			WRITES(government0, "flag_green_public_procurement", 1);
+			}	
+
+			if(V("flag_scenario7") == 1){
+			
+			WRITES(government0, "flag_wealth_tax", 1);
+
+			}
+			
+			if(V("flag_scenario8") == 1){
+			
+			WRITES(government0, "flag_wealth_tax", 1);
+			WRITES(government0, "flag_green_lab", 1);
+			WRITELS(government0, "green_productivity_g" , MAXS( k_sector0, "_green_productivity_k" ), 1);
+
+			}
+
+			if(V("flag_scenario9") == 1){
+			
+			WRITES(government0, "flag_wealth_tax", 1);
+			WRITES(government0, "flag_green_price_subsidies", 1);
+			}
+
+			if(V("flag_scenario10") == 1){
+			
+			WRITES(government0, "flag_wealth_tax", 1);
+			WRITES(government0, "flag_green_research_subsidies", 1);
+			}
+
+			if(V("flag_scenario11") == 1){
+			
+			WRITES(government0, "flag_wealth_tax", 1);
+			WRITES(government0, "flag_green_public_procurement", 1);
+			}	
+
+		}
+
+	RESULT(0)
+ 

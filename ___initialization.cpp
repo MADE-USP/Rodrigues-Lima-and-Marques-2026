@@ -1,0 +1,447 @@
+/******************************************************************************
+
+	INITILIZATION EQUATION
+	----------------------
+
+	Written by Lucca Rodrigues, Made-USP
+
+	Equations that are specific to the initilization process in the Made-Green model
+	are coded below.
+
+ ******************************************************************************/
+
+EQUATION("initialization")
+	/* Equation that initializes pointers used in the model (by any equation). These pointers are created in the model's main file
+
+	Also adds vectors that will be used throughout the simulation. */
+	
+	// creates pointers 
+
+		ADDEXT_INIT( countryE );
+
+		WRITE_EXT( countryE, hh_sector, SEARCH( "hh_sector" ) );
+		WRITE_EXT( countryE, k_sector, SEARCH( "k_sector" ) );
+		WRITE_EXT( countryE, c_sector, SEARCH( "c_sector" ) );
+		WRITE_EXT( countryE, government, SEARCH( "government") );
+		WRITE_EXT( countryE, financial, SEARCH( "financial" ) );
+		WRITE_EXT( countryE, market, SEARCH( "market" ) );
+
+	V("initialization_parameters");
+	V("initialization_k_firms");
+	V("initialization_c_firms");
+	V("initialization_households");
+	V("initialization_government");
+	V("initialization_financial");
+	V("initialization_market");
+	
+
+	VS(c_sector0, "firmCmap" );						// update the mapping vectors
+
+	PARAMETER; // equation is only computed once
+
+RESULT( 0 )
+
+//******************************************************************************
+
+EQUATION( "initialization_parameters")
+
+	v[0] = V( "init_gdp");
+
+	WRITEL( "gdp_nominal", v[0], -1);
+
+	v[1] = V( "capacity_ut_normal");
+
+	v[2] = V( "init_share_consumption");
+
+	v[3] = V( "init_share_investment");
+
+	v[4] = 1 - v[2] - v[3]; //share government
+
+	v[5] = v[0] * v[2]; //initial consumption
+
+	WRITE( "init_consumption", v[5] );
+
+	v[6] = v[0] * v[3];  //initial investment
+
+	WRITE( "init_investment", v[6]);
+
+	v[7] = v[0] * v[4]; //initial goverment
+
+	WRITE( "init_gov_consumption", v[7]);
+
+	v[8] = ( v[5] + v[7] ) / v[1];
+
+	WRITE( "init_capital_stock", v[8]);
+
+PARAMETER;
+
+RESULT( 0 )
+
+EQUATION( "initialization_k_firms")
+
+	v[0] = V("init_total_k_firms"); // parameter with the total number of firms
+
+	// counters and arameters for initial values
+
+		v[1] = 0; // counter of IDs
+
+		v[4] = V("init_green_productivity_c");
+
+		v[5] = V("init_productivity_c");
+
+		v[6] = V("init_green_productivity_k");
+
+		v[7] = V("init_productivity_k");
+
+		v[8] = V("init_wage");
+
+		v[9] = V("mark_up_k");
+
+		v[20] = V("init_investment");    //total K sector production
+
+		v[21] = v[20]/v[0]; //individual firms production
+
+		v[22] = (v[20]/v[0])/v[7]; //workers per firm
+
+		v[23] = ((v[20]/v[0])/v[7])*V("manager_per_worker_k");
+
+		v[24] = (1 + v[9]) * (v[8] + v[8] * (1 + V("wage_premium")) * V("manager_per_worker_k"))/v[7] * v[21]		  //gross profits
+				- v[22] * v[8] - v[23] * v[8] * (1 + V("wage_premium")); //costs
+
+		v[25] = (1 + VS(k_sector0, "mark_up_k")) * v[8] / v[7];
+
+	ADDNOBJLS(k_sector0, "k_firms", v[0]-1, 0); // adds the total number of firms required (1 has already been added)
+
+	CYCLES(k_sector0, cur,"k_firms") // cycle in the capital goods firms 
+	{
+		v[1] ++; // adds one to counter of the firms ID variable
+
+		// parameters update
+
+			WRITES(cur,"_id_firm_k", v[1]); // sets the ID of the firm
+
+		// update hooks and descending objects (clients)
+
+			DELETE( SEARCHS( cur, "clients" ) );		// remove empty instances
+			
+		// variables update 
+
+		WRITELS(cur, "_productivity_k", v[7], -1 );  
+		WRITELS(cur, "_productivity_k_innovation", v[7], -1 );  
+
+		WRITELS(cur, "_green_productivity_k", v[6], -1 );  
+		WRITELS(cur, "_green_productivity_k_innovation", v[6], -1 ); 
+
+		WRITELS(cur, "_productivity_c_new", v[5], -1 ); 
+		WRITELS(cur, "_productivity_c_innovation", v[5], -1 ); 
+
+		WRITELS(cur, "_green_productivity_c_new", v[4], -1 );  
+		WRITELS(cur, "_green_productivity_c_innovation", v[4], -1 );    
+
+		WRITELS(cur, "_productivity_k_growth", 0, -1 );      			
+
+		WRITELS(cur, "_deposits_k", 0, -1 );
+		WRITELS(cur, "_profits_net_k", 0, -1 );
+
+		WRITELS(cur, "_wage_k", v[8], -1 );
+
+		WRITELS(cur, "_innovation_success", 0, -1);	//no innovation in the first period
+
+		WRITELS(cur, "_market_share_k", 1/v[0] , -1 );
+
+		WRITELS(cur, "_production_k", v[21], -1);
+
+		WRITELS(cur, "_workers_k_employed", v[22], -1);
+
+		WRITELS(cur, "_managers_k_employed",v[23], -1);
+
+		WRITELS(cur, "_price_k", v[25], -1);
+
+	}
+
+	v[50] = SUML("_deposits_k", 1);
+
+	WRITELS(k_sector0, "deposits_k", v[50], -1 );
+
+	v[60] = SUML("_production_k", 1);
+
+	WRITELS(k_sector0, "production_k", v[50], -1 );
+
+	INIT_TSEARCHTS( k_sector0, "k_firms", v[0] );			// prepare turbo search indexing
+
+	PARAMETER; // becomes a parameter so that it is not updated again
+
+RESULT( 0 )
+
+//******************************************************************************
+
+EQUATION( "initialization_c_firms")
+
+	v[0] = V("init_total_c_firms"); // parameter with the total number of firms
+
+	// counters and arameters for initial values
+
+		v[1] = 0; // counter of IDs
+
+		v[2] = (V("init_consumption")+V("init_gov_consumption")); //production C sector
+
+		v[3] = V("init_capital_stock") / v[0];    //firms fair share of capital stock
+
+		v[4] = V("init_green_productivity_c");
+
+		v[5] = V("init_productivity_c");
+
+		v[7] = v[2] / v[0];	//initial production per firm
+
+		v[9] = VS(c_sector0, "inventories_desired_share");
+
+		v[10] = 1 / v[0]; 					// initial market share (fair ==)
+
+		v[11] = v[7] / v[5]; 				// initial labor employed to production
+		
+		v[12] = V("init_wage"); 
+
+		v[13] = v[11] * v[12] + v[11] * V("manager_per_worker_c") * v[12] * (1 + V("wage_premium"));  			//initial labor cost
+		
+		v[14] = V("init_mark_up_c");
+	
+		v[15]= VS(government0, "CO2_tax");
+
+		v[16] = v[7] * v[4] * v[15];
+
+		v[17] = ( v[13] + v[16] ) / v[7]; //initial unit cost production
+
+		v[18] = VS(government0, "tax_rate_sales"); 
+
+		v[19] = VS(c_sector0, "dividends_target_c");
+
+	ADDNOBJLS(c_sector0, "c_firms", v[0]-1, 0); // adds the total number of firms required (1 has already been added)
+
+	CYCLES(c_sector0, cur, "c_firms") // cycle in the consumption goods firms 
+	{
+		v[1] ++; // adds one to counter of the firms ID variable
+
+		// parameters update
+
+			WRITES(cur,"_id_firm_c", v[1]); // sets the ID of the firm
+			WRITES(cur, "_date_entry_c", T); //sets the period the firm entred the market
+
+		// update hooks and descending objects (vintage and broch)
+
+			DELETE( SEARCHS( cur, "vintage" ) );		// remove empty instances
+			DELETE( SEARCHS( cur, "broch" ) );
+
+			object *suppl, *vintage;
+
+			set_supplier( cur );
+
+			WRITELS(cur, "_capital_stock_c", v[3], -1 );
+
+			vintage = ADDOBJS(cur, "vintage"); // creates the object vintage
+
+			WRITELS(vintage, "__capital_vintage", v[3], -1); // update total capital in the vintage (variable)
+			WRITELS(vintage, "__init_capital_vintage", v[3], -1); // update total capital in the vintage (variable)
+
+			WRITELS(vintage, "__productivity_vintage", v[5], -1); // updates the productivity of the new capital good (parameter)
+			WRITELS(vintage, "__vintage_date", -1, -1); // period in which the capital was acquired (parameter)
+			WRITELS(vintage, "__green_productivity_vintage", v[4], -1); //updates the emissions coefficient of the new capital good (parameter)
+
+		// variables update 
+
+		WRITELS(cur, "_productivity_c", v[5], -1 );              //initial productivity
+
+		WRITELS(cur, "_productivity_c_growth", 0, -1 );  
+
+		WRITELS(cur, "_production_c", v[7], -1 );          			//production is the capital stock used at the normal capacity ut
+
+		WRITELS(cur, "_inventories_c", 0, -1 ); 			//no inventories is at the desired share level
+
+		WRITELS(cur, "_sales_c_real", v[7] , -1);     	//sold what produced
+		WRITELS(cur, "_sales_c_real", v[7] , -2 );
+		WRITELS(cur, "_sales_c_real", v[7] , -3 );
+		WRITELS(cur, "_sales_c_real", v[7] , -4 );
+
+		WRITELS(cur, "_demand_c_real", v[7] , -1);     	//demand = production at full capacity
+		WRITELS(cur, "_demand_c_real", v[7] , -2 );
+		WRITELS(cur, "_demand_c_real", v[7] , -3 );
+		WRITELS(cur, "_demand_c_real", v[7] , -4 );
+
+		WRITELS(cur, "_market_share_c", v[10], -1 );
+		WRITELS(cur, "_market_share_c", v[10], -2 );
+		WRITELS(cur, "_market_share_effective_c", v[10], -1 );
+
+		WRITELS(cur, "_unfilled_demand_c", 0, -1 );
+
+		WRITELS(cur, "_emissions_c", v[7] * v[4], -1 );
+
+		WRITELS(cur, "_cost_unit_production_c", v[17], -1 );
+	
+		WRITELS(cur, "_price_c", v[17] * (1 + v[14]), -1 );
+
+		WRITELS(cur, "_wage_c", v[12], 1);
+
+			//_profits_gross_c (== _profits_net_c because there is no loan nor capital gains from inventories)
+			v[20] = ( v[17] * (1 + v[14]) ) * ( v[3] * (1-v[9]) ) * ( 1 - v[18] ) - ( v[13] + v[16] );
+						//price       		*		sales_real	  *  net of tax  - minus wages and emissions costs
+			
+			// _profits_distributed_c (simplified)
+			v[21] = v[20] * v[19];
+
+		WRITELS(cur, "_profits_net_c", v[20], -1);
+		WRITELS(cur, "_profits_net_c", v[20], -2);
+		WRITELS(cur, "_profits_net_c", v[20], -3);
+		WRITELS(cur, "_profits_net_c", v[20], -4);
+
+		WRITELS(cur, "_deposits_c",  v[20] * (1-v[19]), -1 );
+		
+		WRITELS(cur, "_loan_c", 0, -1 ); 							//firms start with no debt
+
+		WRITELS(cur, "_mark_up_desired_c", v[14], -1 );
+		WRITELS(cur, "_mark_up_c", v[14], -1 );   
+
+		WRITELS(cur, "_workers_c_employed", v[11], -1 );
+
+		WRITELS(cur, "_managers_c_employed", v[11] * V("manager_per_worker_c"), -1 );		
+		
+	}
+
+	v[22] = SUML("_deposits_c",1); 
+
+	WRITELS(c_sector0, "deposits_c", v[22], -1);
+
+	v[23] = SUML("_loan_c", 1); 
+
+	WRITELS(c_sector0, "loan_c", v[23], -1);
+
+	WRITELS(c_sector0, "inventories_c_real", 0, -1);
+
+	WRITELS(c_sector0, "capital_stock_c", V("init_capital_stock"), -1);
+
+	WRITELS(c_sector0, "capacity_ut_c", V("capacity_ut_normal"), -1);
+
+	WRITELS(c_sector0, "workers_wage_c_avg", v[12], -1);
+
+	PARAMETER; // becomes a parameter so that it is not updated again
+
+RESULT( 0 )
+
+EQUATION( "firmCmap" )
+/*
+Updates the static maps of firms in consumption-good sector
+Only to be called if firm objects in sector 2 are created or destroyed
+*/
+
+// clear vectors
+EXEC_EXTS( PARENT, countryE, firmCmap, clear );
+EXEC_EXTS( PARENT, countryE, firmCptr, clear );
+
+i = 0;											// firm index in vector
+CYCLE( cur, "c_firms" )							// do for all firms in sector 2
+{
+	EXEC_EXTS( PARENT, countryE, firmCptr, push_back, cur );// pointer to firm
+	EXEC_EXTS( PARENT, countryE, firmCmap, insert, // save in firm's map
+			   firmPairT( ( int ) VS( cur, "_id_firm_c" ), cur ) );
+
+	++i;
+}
+
+RESULT( i )
+
+//******************************************************************************
+
+EQUATION("initialization_households")
+
+	v[0] = V("init_unemployment_rate");
+
+	v[1] = V("init_gdp");    //initial aggregate production
+
+	v[2] = SUMLS(c_sector0, "_workers_c_employed", 1)+ 
+			SUMLS(c_sector0, "_managers_c_employed", 1) +
+			SUMLS(k_sector0, "_managers_k_employed", 1) +
+			SUMLS(k_sector0, "_workers_k_employed", 1);
+
+	v[3] = v[1] / v[2]; 										//initial agreggate labor productivity
+	WRITEL("productivity_avg", v[3], -1);
+
+	WRITELS(hh_sector0, "labor_force", round(v[2]/ (1 - v[0])), -1);
+
+	WRITELS(hh_sector0, "unemployment_rate", v[0], -1);
+
+	WRITELS(hh_sector0, "unemployment_change", 0, -1);
+
+	v[4] = V("init_wage"); 
+
+	WRITELS(hh_sector0, "wage", v[4], -1);
+
+	WRITELS(hh_sector0, "wage_min", v[4], -1);
+
+	WRITELS(hh_sector0, "deposits_hh", 0, -1);
+
+	WRITEL( "productivity_change", 0, -1);
+	
+	PARAMETER;
+
+RESULT( 0 )
+
+
+//******************************************************************************
+
+EQUATION("initialization_government")
+
+	WRITELS(government0, "bonds_stock", VS(financial0, "bank_gov_bonds"), -1);
+
+	WRITELS(government0, "gov_deposits_cb", 0, -1);
+
+	WRITELS(government0, "green_bonds_stock", 0, -1);	
+
+	WRITELS(government0, "consumption_realized_gov", V("init_gov_consumption"), -1);	
+
+	WRITELS(government0, "policy_interest_rate", V("init_policy_interest_rate"), -1);
+	
+	PARAMETER;
+
+RESULT( 0 )
+
+//******************************************************************************
+
+EQUATION("initialization_financial")
+
+	v[1] = SUML("_loan_c", 1) + SUML("_loan_k", 1); 
+
+	WRITELS(financial0, "bank_loans", v[1], -1);
+
+	v[2] = SUML("_deposits_k", 1) + SUML("_deposits_c", 1) + VL("deposits_hh", 1); 
+
+	WRITELS(financial0, "bank_deposits", v[2], -1);
+	WRITELS(financial0, "bank_net_worth", v[2], -1); //assume initial net worth == deposits
+
+	v[3] = v[2] * 2 - v[1]; // gov bonds is residual between banks liabilities (deposits + net worth) and assets (loans)
+
+	WRITELS(financial0, "bank_gov_bonds", v[3], -1);
+
+	v[4] = 0;
+
+	WRITELS(financial0, "bank_reserves_cb", v[4], -1); 
+
+	v[5] = VLS(government0, "policy_interest_rate", 1) * (1 + V("interest_rate_spread") );
+
+	WRITELS(financial0, "interest_rate_loan", v[5], -1);
+	
+		PARAMETER;
+
+RESULT( 0 )
+
+
+//******************************************************************************
+
+EQUATION("initialization_market")
+
+	WRITEL("inflation", 0, -1);
+	WRITEL("cpi", 0, -1);
+	WRITEL("gdp_growth", V("init_gdp_growth"), -1);
+	WRITEL("nominal_gdp_growth", V("init_gdp_growth"), -1);
+	WRITEL("emissions_coefficient", V("init_green_productivity_k"), -1);
+	
+	PARAMETER;
+
+RESULT( 0 )

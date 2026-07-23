@@ -1,0 +1,4017 @@
+	
+Label Root
+{
+	Son: market
+	Label market
+	{
+		Son: k_sector
+		Label k_sector
+		{
+			Son: k_firms
+			Label k_firms
+			{
+				Son: clients
+				Label clients
+				{
+					Param: __IDc
+					Param: __nCan
+					Param: __nOrd
+					Param: __tOrd
+					Param: __tSel
+
+				}
+
+				Param: _id_firm_k
+				Var: _clients_historical_k
+				Var: _clients_new_k
+				Var: _cost_managers_k
+				Var: _cost_production_k
+				Var: _cost_unit_production_k
+				Var: _cost_workers_k
+				Var: _deposits_k
+				Var: _dividends_k
+				Var: _emissions_k
+				Var: _green_innovation_success
+				Var: _green_k
+				Var: _green_productivity_c_innovation
+				Var: _green_productivity_c_new
+				Var: _green_productivity_k
+				Var: _green_productivity_k_innovation
+				Var: _innovation_success
+				Var: _managers_k_demand
+				Var: _managers_k_employed
+				Var: _managers_wage_k
+				Var: _market_share_k
+				Var: _orders_k
+				Var: _price_k
+				Var: _production_canceled_k
+				Var: _production_desired_k
+				Var: _production_k
+				Var: _productivity_adoption
+				Var: _productivity_c_innovation
+				Var: _productivity_c_new
+				Var: _productivity_c_new_growth
+				Var: _productivity_k
+				Var: _productivity_k_growth
+				Var: _productivity_k_innovation
+				Var: _profits_distributed_k
+				Var: _profits_gross_k
+				Var: _profits_net_k
+				Var: _research_budget_k
+				Var: _research_cost_k
+				Var: _research_wage_k
+				Var: _researchers_k_demand
+				Var: _researchers_k_employed
+				Var: _sales_k_nominal
+				Var: _taxes_sales_paid_k
+				Var: _wage_k
+				Var: _workers_k_demand
+				Var: _workers_k_employed
+				Var: _wage_k_growth
+				Var: _green_price_subsidie_k
+				Var: _loan_k
+				Var: _green_research_subsidie
+				Var: _green_research_subsidie_share
+				Var: _check_flows_firm_k
+				Var: _imitation_k
+
+			}
+
+			Param: dividends_target_k
+			Param: gamma
+			Param: green_innovation_alpha
+			Param: green_innovation_beta
+			Param: green_innovation_easiness
+			Param: green_innovation_inf
+			Param: green_innovation_sup
+			Param: innovation_alpha
+			Param: innovation_beta
+			Param: innovation_easiness
+			Param: innovation_inf
+			Param: innovation_sup
+			Param: manager_per_worker_k
+			Param: mark_up_k
+			Param: psi_productivity_k
+			Param: nu
+			Var: clients_new_k
+			Var: cost_managers_k
+			Var: cost_unit_production_k_avg
+			Var: cost_workers_k
+			Var: deposits_k
+			Var: emissions_k
+			Var: green_k
+			Var: green_productivity_c_new_avg
+			Var: green_productivity_c_new_max
+			Var: green_productivity_k_average
+			Var: green_productivity_k_avg
+			Var: managers_k_demand
+			Var: managers_k_employed
+			Var: price_k_avg
+			Var: price_k_max
+			Var: production_canceled_k
+			Var: production_desired_k
+			Var: production_k
+			Var: productivity_c_new_avg
+			Var: productivity_c_new_max
+			Var: productivity_c_new_min
+			Var: productivity_k_avg
+			Var: profits_distributed_k
+			Var: research_cost_k
+			Var: researchers_k_demand
+			Var: researchers_k_employed
+			Var: sales_k_nominal
+			Var: total_k_firms
+			Var: workers_k_demand
+			Var: workers_k_employed
+			Var: profits_gross_k
+			Var: cost_unit_production_k_average
+			Var: loan_k
+			Param: imitation_easiness
+			Param: payback
+			Param: xi
+
+		}
+
+		Son: c_sector
+		Label c_sector
+		{
+			Son: c_firms
+			Label c_firms
+			{
+				Son: broch
+				Label broch
+				{
+					Param: __IDs
+
+				}
+
+				Son: vintage
+				Label vintage
+				{
+					Param: __green_productivity_vintage
+					Param: __init_capital_vintage
+					Param: __productivity_vintage
+					Param: __vintage_date
+					Var: __capital_vintage
+					Var: __worker_vintage_max
+
+				}
+
+				Param: _date_entry_c
+				Param: _id_firm_c
+				Var: _brochures
+				Var: _capacity_ut_c
+				Var: _capacity_ut_desired_c
+				Var: _capital_stock_c
+				Var: _competitiveness_c
+				Var: _cost_emissions_expected_c
+				Var: _cost_investment_budget
+				Var: _cost_investment_c
+				Var: _cost_investment_expected_c
+				Var: _cost_loan_interest_due
+				Var: _cost_loan_repayment_budget_c
+				Var: _cost_loan_repayment_due_c
+				Var: _cost_managers_c
+				Var: _cost_managers_expected_c
+				Var: _cost_production_budget_c
+				Var: _cost_production_c
+				Var: _cost_production_expected_c
+				Var: _cost_unit_production_c
+				Var: _cost_unit_production_c_expected
+				Var: _cost_workers_c
+				Var: _cost_workers_expected_c
+				Var: _creation_new_vintage
+				Var: _delete_vintage
+				Var: _deleted_capital
+				Var: _demand_c_growth
+				Var: _demand_c_real
+				Var: _deposit_left_loan_c
+				Var: _deposits_c
+				Var: _dividends_c
+				Var: _emissions_c
+				Var: _emissions_c_expected
+				Var: _green_c
+				Var: _green_productivity_vintage_average
+				Var: _inventories_c
+				Var: _inventories_share_c
+				Var: _investment_canceled_c
+				Var: _investment_demand_c
+				Var: _investment_desired_c
+				Var: _investment_desired_expansion_c
+				Var: _investment_desired_substitution_c
+				Var: _investment_realized_c
+				Var: _loan_c
+				Var: _loan_c_demand
+				Var: _loan_constrained_c_dummy
+				Var: _loan_new_c
+				Var: _managers_c_demand
+				Var: _managers_c_desired
+				Var: _managers_c_employed
+				Var: _managers_wage_c
+				Var: _mark_up_c
+				Var: _mark_up_desired_c
+				Var: _market_share_c
+				Var: _market_share_c_before_rescale
+				Var: _market_share_effective_c
+				Var: _price_c
+				Var: _production_c
+				Var: _production_desired_c
+				Var: _productivity_c
+				Var: _productivity_c_growth
+				Var: _profits_distributed_c
+				Var: _profits_gross_c
+				Var: _profits_net_c
+				Var: _revenue_average_c
+				Var: _sales_c_nominal
+				Var: _sales_c_real
+				Var: _sales_expectations_c
+				Var: _supplier
+				Var: _taxes_sales_paid_c
+				Var: _unfilled_demand_c
+				Var: _vintages
+				Var: _wage_c
+				Var: _workers_c_demand
+				Var: _workers_c_desired
+				Var: _workers_c_employed
+				Var: _wage_c_growth
+				Var: _investment_realized_net_c
+				Var: _green_price_subsidie_c
+
+			}
+
+			Param: capacity_ut_normal
+			Param: delta
+			Param: dividends_target_c
+			Param: entry_periods_safe_c
+			Param: exit_inventories_destroyed
+			Param: exit_market_share_min_c
+			Param: inventories_desired_share
+			Param: manager_per_worker_c
+			Param: mark_up_min_c
+			Param: min_capital_delete
+			Param: profits_distributed_periods
+			Param: psi_productivity_c
+			Param: gamma_a
+			Param: gamma_u
+			Param: sensitivity_competitiveness_price
+			Param: sensitivity_competitiveness_unfilled_demand
+			Param: sensitivity_demand_sales1
+			Param: sensitivity_demand_sales2
+			Param: sensitivity_demand_sales3
+			Param: sensitivity_demand_sales4
+			Param: sensitivity_mark_up_market_share_c
+			Param: sensitivity_market_share_competitiveness
+			Func: firmCmap
+			Var: capacity_ut_c
+			Var: capital_stock_c
+			Var: competitiveness_average_c
+			Var: cost_investment_nominal_c
+			Var: cost_managers_c
+			Var: cost_workers_c
+			Var: deposits_c
+			Var: emissions_c
+			Var: entry_c
+			Var: exit_c
+			Var: green_c
+			Var: green_productivity_c_avg
+			Var: interest_paid_c
+			Var: inventories_c_real
+			Var: inventories_c_real_change
+			Var: investment_demand_c
+			Var: investment_desired_expansion_c
+			Var: investment_desired_substitution_c
+			Var: investment_realized_c
+			Var: loan_c
+			Var: loan_c_demand
+			Var: managers_c_demand
+			Var: managers_c_employed
+			Var: market_share_c_rescale
+			Var: order_equations_c_sector
+			Var: price_c_average_before_ms
+			Var: price_c_average_before_sales
+			Var: price_c_average_consumer
+			Var: price_c_max
+			Var: price_c_min
+			Var: production_c
+			Var: production_c_nominal
+			Var: production_c_real
+			Var: productivity_c_avg
+			Var: profits_distributed_c
+			Var: sales_c_nominal
+			Var: sales_c_real
+			Var: taxes_sales_paid_k
+			Var: total_c_firms
+			Var: unfilled_demand_c_average
+			Var: unfilled_demand_c_max
+			Var: unfilled_demand_c_min
+			Var: workers_c_demand
+			Var: workers_c_employed
+			Var: workers_wage_c_avg
+			Var: cost_unit_production_c_avg
+			Var: profits_gross_c
+			Var: investment_realized_net_c
+
+		}
+
+		Son: hh_sector
+		Label hh_sector
+		{
+			Param: green_wage_premium
+			Param: green_wage_shock
+			Param: n
+			Param: propensity_consume_dividends
+			Param: propensity_consume_income
+			Param: propensity_consume_wage
+			Param: psi_inflation
+			Param: psi_productivity
+			Param: psi_unemployment
+			Param: wage_premium
+			Param: wage_shock
+			Var: capitalists
+			Var: consumption_realized_hh
+			Var: demand_consumption_hh
+			Var: deposits_hh
+			Var: dividends
+			Var: dividends_taxes
+			Var: gini_hh
+			Var: income_disposable_hh
+			Var: income_total_hh
+			Var: labor_demand
+			Var: labor_employed
+			Var: labor_force
+			Var: labor_restriction
+			Var: labor_unemployed
+			Var: total_taxes_hh
+			Var: unemployed_income
+			Var: unemployment_change
+			Var: unemployment_rate
+			Var: wage
+			Var: wage_bill
+			Var: wage_min
+			Var: wage_taxes
+			Var: wage_unemployed
+			Param: wage_sensitivity
+			Var: dividends_wage_ratio
+			Var: wage_demand_growth
+			Param: psi_productivity_avg
+			Var: wage_sensitivity_hh
+			Var: deposits_hh_over_gdp
+			Var: wealth_tax
+			Var: capitalists_income
+			Var: wealth_tax_to_gdp
+
+		}
+
+		Son: government
+		Label government
+		{
+			Var: CO2_tax
+			Param: RHO_0
+			Param: RHO_u
+			Param: dividends_tax_rate
+			Param: flag_inf_target
+			Param: inflation_target
+			Param: interest_rate_min
+			Param: interest_rate_persistence
+			Param: it_regime_periods
+			Param: sensitivity_interest_inflation_gap
+			Param: sensitivity_interest_unemployment_gap
+			Param: tax_rate_sales
+			Param: unemployment_rate_target
+			Param: wage_tax_rate
+			Param: wage_unemployed_discount
+			Var: bonds_flow
+			Var: bonds_interest_paid
+			Var: bonds_stock
+			Var: bonds_stock_to_gdp
+			Var: consumption_realized_gov
+			Var: demand_consumption_government
+			Var: gov_deposits_cb
+			Var: gov_result_nominal
+			Var: gov_result_nominal_to_gdp
+			Var: gov_result_primary
+			Var: gov_result_primary_to_gdp
+			Var: government_spending_realized
+			Var: green_bonds_stock
+			Var: green_government_result_unajusted
+			Var: green_government_spending
+			Var: inflation_average
+			Var: policy_interest_rate
+			Var: taxes_emissions
+			Var: taxes_income
+			Var: taxes_revenue
+			Var: taxes_sales
+			Var: taxes_to_gdp
+			Var: unemployment_benefit_paid
+			Var: unemployment_rate_average
+			Var: gov_spending_to_gdp
+			Var: gov_consumption_to_gdp
+			Var: unemployment_benefit_to_gdp
+			Param: target_gov_size
+			Var: green_government_result
+			Var: green_government_result_to_gdp
+			Var: green_government_spending_to_gdp
+			Var: taxes_emissions_to_gdp
+			Param: flag_green_lab
+			Var: green_lab_cost
+			Var: researchers_cost_g
+			Var: researchers_g_demand
+			Var: researchers_g_employed
+			Var: green_productivity_g
+			Param: flag_green_price_subsidies
+			Var: green_price_subsidie
+			Var: green_price_subsidie_cost
+			Param: flag_green_research_subsidies
+			Var: green_research_subsidie
+			Var: green_research_subsidie_cost
+			Var: green_basic_income
+			Var: green_basic_income_cost
+			Param: flag_green_basic_income
+			Var: research_wage_g
+			Var: green_transfer_cost
+			Var: green_transfer
+			Param: flag_green_transfer
+			Var: total_bonds_stock
+			Var: green_bonds_stock_share
+			Param: green_discount
+			Var: green_policy_interest_rate
+			Var: green_public_procurement_c
+			Var: green_public_procurement_cost
+			Param: flag_green_public_procurement
+			Param: flag_dividends_tax
+			Var: dividends_taxes_to_gdp
+			Param: policy_share_output
+			Param: flag_carbon_tax
+			Param: flag_wealth_tax
+			Var: wealth_tax_rate
+			Var: green_public_procurement_k
+
+		}
+
+		Son: financial
+		Label financial
+		{
+			Param: CAR
+			Param: deposits_exited_firms
+			Param: interest_rate_spread
+			Param: loans_paid_exited_firms
+			Param: loans_unpaid_exited_firms
+			Param: phi
+			Var: bank_debt_supply_max
+			Var: bank_deposits
+			Var: bank_gov_bonds
+			Var: bank_gov_bonds_flow
+			Var: bank_loans
+			Var: bank_net_worth
+			Var: bank_profits
+			Var: bank_reserves_cb
+			Var: interest_rate_loan
+			Var: bank_gov_green_bonds
+
+		}
+
+		Param: capitalists_per_firm
+		Param: check_threshold
+		Param: damage_alpha
+		Param: damage_beta
+		Param: damage_easiness
+		Param: damage_inf
+		Param: damage_sup
+		Param: emissions_0
+		Param: error_margin_accepted
+		Param: flag_damage_function_productivity
+		Param: flag_innovation_separate
+		Param: green_treshold
+		Param: init_capital_stock
+		Param: init_consumption
+		Param: init_gdp
+		Param: init_gov_consumption
+		Param: init_green_productivity_c
+		Param: init_green_productivity_k
+		Param: init_investment
+		Param: init_mark_up_c
+		Param: init_policy_interest_rate
+		Param: init_productivity_c
+		Param: init_productivity_k
+		Param: init_share_consumption
+		Param: init_share_investment
+		Param: init_total_c_firms
+		Param: init_total_k_firms
+		Param: init_unemployment_rate
+		Param: init_wage
+		Param: tA0
+		Var: carbon_concentrarion
+		Var: check_flows_bank
+		Var: check_flows_consumption
+		Var: check_flows_deposits
+		Var: check_flows_firm_c
+		Var: check_flows_firm_k
+		Var: check_flows_government
+		Var: check_flows_hh
+		Var: check_flows_loan
+		Var: check_flows_profits
+		Var: check_flows_wages
+		Var: check_macro_aggregates
+		Var: check_macro_aggregates_real
+		Var: check_sales
+		Var: check_stocks_bank
+		Var: check_stocks_deposits
+		Var: check_stocks_loan
+		Var: checks
+		Var: cpi
+		Var: cpi_base
+		Var: damage_shock_productivity
+		Var: demand_c_nominal
+		Var: demand_c_real
+		Var: emissions
+		Var: emissions_coefficient
+		Var: gdp_growth
+		Var: gdp_nominal
+		Var: gdp_nominal_demand_approach
+		Var: gdp_real
+		Var: gdp_real_demand_approach
+		Var: inflation
+		Var: inflation_change
+		Var: initialization
+		Var: initialization_c_firms
+		Var: initialization_financial
+		Var: initialization_government
+		Var: initialization_households
+		Var: initialization_k_firms
+		Var: initialization_market
+		Var: loans_to_gdp
+		Var: productivity_avg
+		Var: productivity_change
+		Var: profits_gross_nominal
+		Var: timeStep
+		Var: wage_share
+		Var: initialization_parameters
+		Var: nominal_gdp_growth
+		Param: init_gdp_growth
+		Var: shock
+		Var: profit_share
+		Param: flag_scenario2
+		Param: flag_scenario3
+		Param: flag_scenario4
+		Param: flag_scenario5
+		Param: flag_scenario6
+		Param: flag_scenario7
+		Param: flag_scenario8
+		Param: flag_scenario9
+		Param: flag_scenario10
+		Param: flag_scenario11
+		Param: flag_scenario12
+		Param: flag_scenario13
+		Param: flag_scenario14
+		Param: flag_scenario15
+		Var: consumption_growth
+		Var: investment_growth
+
+	}
+
+	Var: runCountry
+	Var: init
+	Var: order_equations
+
+}
+
+
+DATA
+
+Object: Root C	1
+Var: runCountry 0 n + n n
+Var: init 0 n + n n
+Var: order_equations 0 n + n n
+
+Object: market C	1
+Param: capitalists_per_firm 0 n + n n	1
+Param: check_threshold 0 n + n n	0.05
+Param: damage_alpha 0 n + n n	2.5
+Param: damage_beta 0 n + n n	2.5
+Param: damage_easiness 0 n + n n	0.01
+Param: damage_inf 0 n + n n	-0.05
+Param: damage_sup 0 n + n n	0
+Param: emissions_0 0 n + n n	0
+Param: error_margin_accepted 0 n + n n	0.01
+Param: flag_damage_function_productivity 0 n + n n	0
+Param: flag_innovation_separate 0 n + n n	1
+Param: green_treshold 0 n + n n	0.25
+Param: init_capital_stock 0 n + n n	0
+Param: init_consumption 0 n + n n	0
+Param: init_gdp 0 n + n n	10900
+Param: init_gov_consumption 0 n + n n	0
+Param: init_green_productivity_c 0 n + n n	40
+Param: init_green_productivity_k 0 n + n n	40
+Param: init_investment 0 n + n n	0
+Param: init_mark_up_c 0 n + n n	0.5
+Param: init_policy_interest_rate 0 n + n n	0.01
+Param: init_productivity_c 0 n + n n	1
+Param: init_productivity_k 0 n + n n	1
+Param: init_share_consumption 0 n + n n	0.6
+Param: init_share_investment 0 n + n n	0.18
+Param: init_total_c_firms 0 n + n n	200
+Param: init_total_k_firms 0 n + n n	50
+Param: init_unemployment_rate 0 n + n n	0.078
+Param: init_wage 0 n + n n	10
+Param: tA0 0 n + n n	0
+Var: carbon_concentrarion 0 n + n n
+Var: check_flows_bank 0 n + n n
+Var: check_flows_consumption 0 n + n n
+Var: check_flows_deposits 0 n + n n
+Var: check_flows_firm_c 0 n + n n
+Var: check_flows_firm_k 0 n + n n
+Var: check_flows_government 0 n + n n
+Var: check_flows_hh 0 n + n n
+Var: check_flows_loan 0 n + n n
+Var: check_flows_profits 0 n + n n
+Var: check_flows_wages 0 n + n n
+Var: check_macro_aggregates 0 n + n n
+Var: check_macro_aggregates_real 0 n + n n
+Var: check_sales 0 n + n n
+Var: check_stocks_bank 0 n + n n
+Var: check_stocks_deposits 0 n + n n
+Var: check_stocks_loan 0 n + n n
+Var: checks 0 n + n n
+Var: cpi 1 s + n n	0
+Var: cpi_base 0 n + n n
+Var: damage_shock_productivity 0 s + n n
+Var: demand_c_nominal 0 s + n n
+Var: demand_c_real 0 s + n n
+Var: emissions 1 s + n n	0
+Var: emissions_coefficient 1 s + n n	0
+Var: gdp_growth 1 s + n n	0
+Var: gdp_nominal 1 s + n n	0
+Var: gdp_nominal_demand_approach 0 n + n n
+Var: gdp_real 1 s + n n	0
+Var: gdp_real_demand_approach 0 s + n n
+Var: inflation 1 s + n n	0
+Var: inflation_change 0 n + n n
+Var: initialization 0 n + n n
+Var: initialization_c_firms 0 n + n n
+Var: initialization_financial 0 n + n n
+Var: initialization_government 0 n + n n
+Var: initialization_households 0 n + n n
+Var: initialization_k_firms 0 n + n n
+Var: initialization_market 0 n + n n
+Var: loans_to_gdp 0 s + n n
+Var: productivity_avg 1 s + n n	0
+Var: productivity_change 1 s + n n	0
+Var: profits_gross_nominal 0 s + n n
+Var: timeStep 0 n + n n
+Var: wage_share 0 s + n n
+Var: initialization_parameters 0 n + n n
+Var: nominal_gdp_growth 1 s + n n	0
+Param: init_gdp_growth 0 n + n n	0.029
+Var: shock 0 n + n n
+Var: profit_share 0 s + n n
+Param: flag_scenario2 0 n + n n	1
+Param: flag_scenario3 0 n + n n	0
+Param: flag_scenario4 0 n + n n	0
+Param: flag_scenario5 0 n + n n	0
+Param: flag_scenario6 0 n + n n	0
+Param: flag_scenario7 0 n + n n	0
+Param: flag_scenario8 0 n + n n	0
+Param: flag_scenario9 0 n + n n	0
+Param: flag_scenario10 0 n + n n	0
+Param: flag_scenario11 0 n + n n	0
+Param: flag_scenario12 0 n + n n	0
+Param: flag_scenario13 0 n + n n	0
+Param: flag_scenario14 0 n + n n	0
+Param: flag_scenario15 0 n + n n	0
+Var: consumption_growth 0 s + n n
+Var: investment_growth 0 s + n n
+
+Object: k_sector C	1
+Param: dividends_target_k 0 n + n n	0.2
+Param: gamma 0 n + n n	0.5
+Param: green_innovation_alpha 0 n + n n	3
+Param: green_innovation_beta 0 n + n n	3
+Param: green_innovation_easiness 0 n + n n	0.4
+Param: green_innovation_inf 0 n + n n	-0.145
+Param: green_innovation_sup 0 n + n n	0.15
+Param: innovation_alpha 0 n + n n	3
+Param: innovation_beta 0 n + n n	3
+Param: innovation_easiness 0 n + n n	0.5
+Param: innovation_inf 0 n + n n	-0.25
+Param: innovation_sup 0 n + n n	0.35
+Param: manager_per_worker_k 0 n + n n	0.5
+Param: mark_up_k 0 n + n n	0.5
+Param: psi_productivity_k 0 n + n n	1
+Param: nu 0 n + n n	0.5
+Var: clients_new_k 0 s + n n
+Var: cost_managers_k 0 s + n n
+Var: cost_unit_production_k_avg 0 s + n n
+Var: cost_workers_k 0 s + n n
+Var: deposits_k 1 s + n n	0
+Var: emissions_k 1 s + n n	0
+Var: green_k 0 s + n n
+Var: green_productivity_c_new_avg 0 s + n n
+Var: green_productivity_c_new_max 0 n + n n
+Var: green_productivity_k_average 0 n + n n
+Var: green_productivity_k_avg 0 s + n n
+Var: managers_k_demand 0 n + n n
+Var: managers_k_employed 0 s + n n
+Var: price_k_avg 0 s + n n
+Var: price_k_max 0 n + n n
+Var: production_canceled_k 0 s + n n
+Var: production_desired_k 0 n + n n
+Var: production_k 1 s + n n	0
+Var: productivity_c_new_avg 0 s + n n
+Var: productivity_c_new_max 0 n + n n
+Var: productivity_c_new_min 0 n + n n
+Var: productivity_k_avg 0 s + n n
+Var: profits_distributed_k 0 s + n n
+Var: research_cost_k 0 n + n n
+Var: researchers_k_demand 0 s + n n
+Var: researchers_k_employed 0 s + n n
+Var: sales_k_nominal 0 s + n n
+Var: total_k_firms 0 n + n n
+Var: workers_k_demand 0 s + n n
+Var: workers_k_employed 0 s + n n
+Var: profits_gross_k 0 s + n n
+Var: cost_unit_production_k_average 0 s + n n
+Var: loan_k 1 n + n n	0
+Param: imitation_easiness 0 n + n n	0.5
+Param: payback 0 n + n n	1
+Param: xi 0 n + n n	1
+
+Object: k_firms C	1
+Param: _id_firm_k 0 n + n n	1
+Var: _clients_historical_k 0 n + n n
+Var: _clients_new_k 0 n + n n
+Var: _cost_managers_k 0 n + n n
+Var: _cost_production_k 0 n + n n
+Var: _cost_unit_production_k 0 n + n n
+Var: _cost_workers_k 0 n + n n
+Var: _deposits_k 1 n + n n	0
+Var: _dividends_k 0 n + n n
+Var: _emissions_k 0 n + n n
+Var: _green_innovation_success 0 n + n n
+Var: _green_k 1 n + n n	0
+Var: _green_productivity_c_innovation 1 n + n n	0
+Var: _green_productivity_c_new 1 s + n n	0
+Var: _green_productivity_k 1 s + n n	0
+Var: _green_productivity_k_innovation 1 n + n n	0
+Var: _innovation_success 1 n + n n	0
+Var: _managers_k_demand 0 n + n n
+Var: _managers_k_employed 1 n + n n	0
+Var: _managers_wage_k 0 n + n n
+Var: _market_share_k 1 s + n n	0
+Var: _orders_k 0 n + n n
+Var: _price_k 1 s + n n	0
+Var: _production_canceled_k 0 n + n n
+Var: _production_desired_k 0 n + n n
+Var: _production_k 1 n + n n	0
+Var: _productivity_adoption 0 s + n n
+Var: _productivity_c_innovation 1 n + n n	0
+Var: _productivity_c_new 1 s + n n	0
+Var: _productivity_c_new_growth 1 n + n n	0
+Var: _productivity_k 1 s + n n	0
+Var: _productivity_k_growth 1 n + n n	0
+Var: _productivity_k_innovation 1 n + n n	0
+Var: _profits_distributed_k 0 n + n n
+Var: _profits_gross_k 0 n + n n
+Var: _profits_net_k 1 n + n n	0
+Var: _research_budget_k 0 n + n n
+Var: _research_cost_k 0 n + n n
+Var: _research_wage_k 0 n + n n
+Var: _researchers_k_demand 0 n + n n
+Var: _researchers_k_employed 1 n + n n	0
+Var: _sales_k_nominal 0 n + n n
+Var: _taxes_sales_paid_k 0 n + n n
+Var: _wage_k 1 s + n n	0
+Var: _workers_k_demand 0 n + n n
+Var: _workers_k_employed 1 n + n n	0
+Var: _wage_k_growth 0 n + n n
+Var: _green_price_subsidie_k 0 n + n n
+Var: _loan_k 1 n + n n	0
+Var: _green_research_subsidie 0 n + n n
+Var: _green_research_subsidie_share 0 n + n n
+Var: _check_flows_firm_k 0 n + n n
+Var: _imitation_k 1 n + n n	0
+
+Object: clients C	1
+Param: __IDc 0 n + n n	0
+Param: __nCan 0 n + n n	0
+Param: __nOrd 0 n + n n	0
+Param: __tOrd 0 n + n n	0
+Param: __tSel 0 n + n n	0
+
+Object: c_sector C	1
+Param: capacity_ut_normal 0 s + n n	0.8
+Param: delta 0 n + n n	0.1
+Param: dividends_target_c 0 n + n n	0.2
+Param: entry_periods_safe_c 0 n + n n	5
+Param: exit_inventories_destroyed 0 n + n n	0
+Param: exit_market_share_min_c 0 n + n n	0
+Param: inventories_desired_share 0 n + n n	0.15
+Param: manager_per_worker_c 0 n + n n	0.5
+Param: mark_up_min_c 0 n + n n	0.1
+Param: min_capital_delete 0 n + n n	0.05
+Param: profits_distributed_periods 0 n + n n	4
+Param: psi_productivity_c 0 n + n n	1
+Param: gamma_a 0 n + n n	0.1
+Param: gamma_u 0 n + n n	0.3
+Param: sensitivity_competitiveness_price 0 n + n n	1
+Param: sensitivity_competitiveness_unfilled_demand 0 n + n n	1
+Param: sensitivity_demand_sales1 0 n + n n	1
+Param: sensitivity_demand_sales2 0 n + n n	1
+Param: sensitivity_demand_sales3 0 n + n n	1
+Param: sensitivity_demand_sales4 0 n + n n	1
+Param: sensitivity_mark_up_market_share_c 0 n + n n	0.04
+Param: sensitivity_market_share_competitiveness 0 n + n n	1
+Func: firmCmap 0 n + n n
+Var: capacity_ut_c 1 s + n n	0
+Var: capital_stock_c 1 s + n n	0
+Var: competitiveness_average_c 0 n + n n
+Var: cost_investment_nominal_c 0 n + n n
+Var: cost_managers_c 0 n + n n
+Var: cost_workers_c 0 n + n n
+Var: deposits_c 1 n + n n	0
+Var: emissions_c 1 s + n n	0
+Var: entry_c 0 n + n n
+Var: exit_c 0 s + n n
+Var: green_c 0 s + n n
+Var: green_productivity_c_avg 0 s + n n
+Var: interest_paid_c 0 n + n n
+Var: inventories_c_real 1 n + n n	0
+Var: inventories_c_real_change 0 n + n n
+Var: investment_demand_c 0 s + n n
+Var: investment_desired_expansion_c 0 n + n n
+Var: investment_desired_substitution_c 0 n + n n
+Var: investment_realized_c 0 s + n n
+Var: loan_c 1 s + n n	0
+Var: loan_c_demand 0 s + n n
+Var: managers_c_demand 0 n + n n
+Var: managers_c_employed 0 s + n n
+Var: market_share_c_rescale 0 n + n n
+Var: order_equations_c_sector 0 n + n n
+Var: price_c_average_before_ms 0 n + n n
+Var: price_c_average_before_sales 0 n + n n
+Var: price_c_average_consumer 0 s + n n
+Var: price_c_max 0 n + n n
+Var: price_c_min 0 n + n n
+Var: production_c 0 s + n n
+Var: production_c_nominal 0 n + n n
+Var: production_c_real 1 s + n n	0
+Var: productivity_c_avg 0 n + n n
+Var: profits_distributed_c 1 n + n n	0
+Var: sales_c_nominal 0 s + n n
+Var: sales_c_real 0 n + n n
+Var: taxes_sales_paid_k 0 n + n n
+Var: total_c_firms 0 n + n n
+Var: unfilled_demand_c_average 0 n + n n
+Var: unfilled_demand_c_max 0 n + n n
+Var: unfilled_demand_c_min 0 n + n n
+Var: workers_c_demand 0 s + n n
+Var: workers_c_employed 0 s + n n
+Var: workers_wage_c_avg 1 n + n n	0
+Var: cost_unit_production_c_avg 0 s + n n
+Var: profits_gross_c 0 s + n n
+Var: investment_realized_net_c 1 s + n n	0
+
+Object: c_firms C	1
+Param: _date_entry_c 0 n + n n	0
+Param: _id_firm_c 0 n + n n	1
+Var: _brochures 0 n + n n
+Var: _capacity_ut_c 0 n + n n
+Var: _capacity_ut_desired_c 0 n + n n
+Var: _capital_stock_c 1 n + n n	0
+Var: _competitiveness_c 1 n + n n	0
+Var: _cost_emissions_expected_c 0 n + n n
+Var: _cost_investment_budget 0 n + n n
+Var: _cost_investment_c 0 n + n n
+Var: _cost_investment_expected_c 0 n + n n
+Var: _cost_loan_interest_due 0 n + n n
+Var: _cost_loan_repayment_budget_c 0 n + n n
+Var: _cost_loan_repayment_due_c 0 n + n n
+Var: _cost_managers_c 0 n + n n
+Var: _cost_managers_expected_c 0 n + n n
+Var: _cost_production_budget_c 0 n + n n
+Var: _cost_production_c 0 n + n n
+Var: _cost_production_expected_c 0 n + n n
+Var: _cost_unit_production_c 1 n + n n	0
+Var: _cost_unit_production_c_expected 0 n + n n
+Var: _cost_workers_c 0 n + n n
+Var: _cost_workers_expected_c 0 n + n n
+Var: _creation_new_vintage 0 n + n n
+Var: _delete_vintage 0 n + n n
+Var: _deleted_capital 1 n + n n	0
+Var: _demand_c_growth 0 n + n n
+Var: _demand_c_real 4 n + n n	0	0	0	0
+Var: _deposit_left_loan_c 0 n + n n
+Var: _deposits_c 1 n + n n	0
+Var: _dividends_c 0 n + n n
+Var: _emissions_c 1 n + n n	0
+Var: _emissions_c_expected 0 n + n n
+Var: _green_c 1 n + n n	0
+Var: _green_productivity_vintage_average 0 n + n n
+Var: _inventories_c 1 n + n n	0
+Var: _inventories_share_c 0 n + n n
+Var: _investment_canceled_c 0 n + n n
+Var: _investment_demand_c 0 n + n n
+Var: _investment_desired_c 0 n + n n
+Var: _investment_desired_expansion_c 0 n + n n
+Var: _investment_desired_substitution_c 0 n + n n
+Var: _investment_realized_c 0 n + n n
+Var: _loan_c 1 n + n n	0
+Var: _loan_c_demand 0 n + n n
+Var: _loan_constrained_c_dummy 0 n + n n
+Var: _loan_new_c 0 n + n n
+Var: _managers_c_demand 0 n + n n
+Var: _managers_c_desired 0 n + n n
+Var: _managers_c_employed 1 n + n n	0
+Var: _managers_wage_c 0 n + n n
+Var: _mark_up_c 1 s + n n	0
+Var: _mark_up_desired_c 1 n + n n	0
+Var: _market_share_c 2 s + n n	0	0
+Var: _market_share_c_before_rescale 0 n + n n
+Var: _market_share_effective_c 1 n + n n	0
+Var: _price_c 1 s + n n	0
+Var: _production_c 1 n + n n	0
+Var: _production_desired_c 0 n + n n
+Var: _productivity_c 1 n + n n	0
+Var: _productivity_c_growth 1 n + n n	0
+Var: _profits_distributed_c 0 n + n n
+Var: _profits_gross_c 0 n + n n
+Var: _profits_net_c 4 n + n n	0	0	0	0
+Var: _revenue_average_c 0 n + n n
+Var: _sales_c_nominal 0 n + n n
+Var: _sales_c_real 4 n + n n	0	0	0	0
+Var: _sales_expectations_c 0 n + n n
+Var: _supplier 0 n + n n
+Var: _taxes_sales_paid_c 0 n + n n
+Var: _unfilled_demand_c 1 n + n n	0
+Var: _vintages 1 n + n n	0
+Var: _wage_c 1 s + n n	0
+Var: _workers_c_demand 0 n + n n
+Var: _workers_c_desired 0 n + n n
+Var: _workers_c_employed 1 n + n n	0
+Var: _wage_c_growth 0 n + n n
+Var: _investment_realized_net_c 0 n + n n
+Var: _green_price_subsidie_c 0 n + n n
+
+Object: broch C	1
+Param: __IDs 0 n + n n	0
+
+Object: vintage C	1
+Param: __green_productivity_vintage 0 n + n n	0
+Param: __init_capital_vintage 0 n + n n	0
+Param: __productivity_vintage 0 n + n n	0
+Param: __vintage_date 0 n + n n	0
+Var: __capital_vintage 1 n + n n	0
+Var: __worker_vintage_max 0 n + n n
+
+Object: hh_sector C	1
+Param: green_wage_premium 0 n + n n	0
+Param: green_wage_shock 0 n + n n	0
+Param: n 0 n + n n	0
+Param: propensity_consume_dividends 0 n + n n	0.9
+Param: propensity_consume_income 0 s + n n	0
+Param: propensity_consume_wage 0 n + n n	1
+Param: psi_inflation 0 n + n n	1
+Param: psi_productivity 0 n + n n	1
+Param: psi_unemployment 0 n + n n	0
+Param: wage_premium 0 n + n n	0.5
+Param: wage_shock 0 n + n n	0.02
+Var: capitalists 0 s + n n
+Var: consumption_realized_hh 0 s + n n
+Var: demand_consumption_hh 0 s + n n
+Var: deposits_hh 1 s + n n	0
+Var: dividends 1 s + n n	0
+Var: dividends_taxes 0 s + n n
+Var: gini_hh 0 s + n n
+Var: income_disposable_hh 0 s + n n
+Var: income_total_hh 0 s + n n
+Var: labor_demand 0 s + n n
+Var: labor_employed 0 s + n n
+Var: labor_force 1 s + n n	0
+Var: labor_restriction 0 s + n n
+Var: labor_unemployed 0 s + n n
+Var: total_taxes_hh 0 n + n n
+Var: unemployed_income 0 n + n n
+Var: unemployment_change 1 n + n n	0
+Var: unemployment_rate 1 s + n n	0
+Var: wage 1 s + n n	10
+Var: wage_bill 0 s + n n
+Var: wage_min 1 s + n n	0
+Var: wage_taxes 0 n + n n
+Var: wage_unemployed 0 s + n n
+Param: wage_sensitivity 0 s + n n	0.6
+Var: dividends_wage_ratio 0 s + n n
+Var: wage_demand_growth 0 s + n n
+Param: psi_productivity_avg 0 n + n n	1
+Var: wage_sensitivity_hh 0 s + n n
+Var: deposits_hh_over_gdp 0 s + n n
+Var: wealth_tax 1 s + n n	0
+Var: capitalists_income 0 s + n n
+Var: wealth_tax_to_gdp 0 s + n n
+
+Object: government C	1
+Var: CO2_tax 0 s + n n
+Param: RHO_0 0 n + n n	0.5
+Param: RHO_u 0 n + n n	0.5
+Param: dividends_tax_rate 0 s + n n	0.05
+Param: flag_inf_target 0 n + n n	0
+Param: inflation_target 0 n + n n	0.035
+Param: interest_rate_min 0 n + n n	0.001
+Param: interest_rate_persistence 0 n + n n	0.5
+Param: it_regime_periods 0 n + n n	4
+Param: sensitivity_interest_inflation_gap 0 n + n n	0.5
+Param: sensitivity_interest_unemployment_gap 0 n + n n	0.5
+Param: tax_rate_sales 0 n + n n	0.15
+Param: unemployment_rate_target 0 n + n n	0.085
+Param: wage_tax_rate 0 n + n n	0.1
+Param: wage_unemployed_discount 0 n + n n	0.75
+Var: bonds_flow 0 s + n n
+Var: bonds_interest_paid 0 n + n n
+Var: bonds_stock 1 s + n n	0
+Var: bonds_stock_to_gdp 0 s + n n
+Var: consumption_realized_gov 1 s + n n	0
+Var: demand_consumption_government 0 s + n n
+Var: gov_deposits_cb 1 n + n n	0
+Var: gov_result_nominal 0 n + n n
+Var: gov_result_nominal_to_gdp 0 s + n n
+Var: gov_result_primary 0 n + n n
+Var: gov_result_primary_to_gdp 0 s + n n
+Var: government_spending_realized 0 s + n n
+Var: green_bonds_stock 1 s + n n	0
+Var: green_government_result_unajusted 0 n + n n
+Var: green_government_spending 0 s + n n
+Var: inflation_average 1 n + n n	0
+Var: policy_interest_rate 1 s + n n	0.05
+Var: taxes_emissions 1 s + n n	0
+Var: taxes_income 0 n + n n
+Var: taxes_revenue 0 s + n n
+Var: taxes_sales 0 n + n n
+Var: taxes_to_gdp 0 s + n n
+Var: unemployment_benefit_paid 0 n + n n
+Var: unemployment_rate_average 1 n + n n	0
+Var: gov_spending_to_gdp 0 s + n n
+Var: gov_consumption_to_gdp 0 s + n n
+Var: unemployment_benefit_to_gdp 0 s + n n
+Param: target_gov_size 0 n + n n	0.25
+Var: green_government_result 0 s + n n
+Var: green_government_result_to_gdp 0 s + n n
+Var: green_government_spending_to_gdp 0 s + n n
+Var: taxes_emissions_to_gdp 0 s + n n
+Param: flag_green_lab 0 n + n n	0
+Var: green_lab_cost 1 s + n n	0
+Var: researchers_cost_g 0 s + n n
+Var: researchers_g_demand 0 n + n n
+Var: researchers_g_employed 0 s + n n
+Var: green_productivity_g 1 s + n n	0
+Param: flag_green_price_subsidies 0 n + n n	0
+Var: green_price_subsidie 1 s + n n	0
+Var: green_price_subsidie_cost 0 s + n n
+Param: flag_green_research_subsidies 0 n + n n	0
+Var: green_research_subsidie 1 s + n n	0
+Var: green_research_subsidie_cost 0 s + n n
+Var: green_basic_income 0 s + n n
+Var: green_basic_income_cost 0 s + n n
+Param: flag_green_basic_income 0 n + n n	0
+Var: research_wage_g 0 s + n n
+Var: green_transfer_cost 0 s + n n
+Var: green_transfer 0 s + n n
+Param: flag_green_transfer 0 n + n n	0
+Var: total_bonds_stock 0 s + n n
+Var: green_bonds_stock_share 0 n + n n
+Param: green_discount 0 n + n n	0
+Var: green_policy_interest_rate 1 n + n n	0
+Var: green_public_procurement_c 0 s + n n
+Var: green_public_procurement_cost 0 s + n n
+Param: flag_green_public_procurement 0 n + n n	0
+Param: flag_dividends_tax 0 n + n n	0
+Var: dividends_taxes_to_gdp 0 s + n n
+Param: policy_share_output 0 n + n n	0.03
+Param: flag_carbon_tax 0 n + n n	0
+Param: flag_wealth_tax 0 n + n n	0
+Var: wealth_tax_rate 0 s + n n
+Var: green_public_procurement_k 0 n + n n
+
+Object: financial C	1
+Param: CAR 0 n + n n	16
+Param: deposits_exited_firms 0 n + n n	0
+Param: interest_rate_spread 0 n + n n	0.1
+Param: loans_paid_exited_firms 0 s + n n	0
+Param: loans_unpaid_exited_firms 0 s + n n	0
+Param: phi 0 n + n n	2
+Var: bank_debt_supply_max 0 s + n n
+Var: bank_deposits 1 n + n n	0
+Var: bank_gov_bonds 1 s + n n	0
+Var: bank_gov_bonds_flow 0 n + n n
+Var: bank_loans 1 s + n n	0
+Var: bank_net_worth 1 s + n n	0
+Var: bank_profits 0 n + n n
+Var: bank_reserves_cb 1 s + n n	0
+Var: interest_rate_loan 1 s + n n	0
+Var: bank_gov_green_bonds 1 n + n n	0
+
+SIM_NUM 50
+SEED 1
+MAX_STEP 350 1 0 0 0 0 0 0
+EQUATION fun_green_model_v3.cpp
+MODELREPORT report_Sim1.html
+
+DESCRIPTION
+
+Object_Root
+
+END_DESCRIPTION
+
+Variable_runCountry
+Execute the current time-step for all existing countries
+END_DESCRIPTION
+
+Variable_init
+
+END_DESCRIPTION
+
+Variable_order_equations
+Equation to be added in the ROOT of the model, to guarantee that the main equations are calculated in the correct order 
+
+	This is very important in order to guarantee that all values have been updated before they are called by other equations: this can be a problem especially in case WRITE functions are used (although this problem is somewhat attenuated if EQUATION_DUMMY is used in these cases).
+
+	Note that variables that are calculated for agents with various instances (HH or C firms) need to added here as sectoral, otherwise they are calculated only for the first agent of the category
+END_DESCRIPTION
+
+Object_market
+
+END_DESCRIPTION
+
+Parameter_capitalists_per_firm
+
+END_DESCRIPTION
+
+Parameter_check_threshold
+
+END_DESCRIPTION
+
+Parameter_damage_alpha
+
+END_DESCRIPTION
+
+Parameter_damage_beta
+
+END_DESCRIPTION
+
+Parameter_damage_easiness
+
+END_DESCRIPTION
+
+Parameter_damage_inf
+
+END_DESCRIPTION
+
+Parameter_damage_sup
+
+END_DESCRIPTION
+
+Parameter_emissions_0
+
+END_DESCRIPTION
+
+Parameter_error_margin_accepted
+
+END_DESCRIPTION
+
+Parameter_flag_damage_function_productivity
+
+END_DESCRIPTION
+
+Parameter_flag_innovation_separate
+
+_INIT_
+All 1 instances equal to 1
+END_DESCRIPTION
+
+Parameter_green_treshold
+
+END_DESCRIPTION
+
+Parameter_init_capital_stock
+
+_INIT_
+All 1 instances equal to 200
+END_DESCRIPTION
+
+Parameter_init_consumption
+
+END_DESCRIPTION
+
+Parameter_init_gdp
+
+END_DESCRIPTION
+
+Parameter_init_gov_consumption
+
+END_DESCRIPTION
+
+Parameter_init_green_productivity_c
+
+END_DESCRIPTION
+
+Parameter_init_green_productivity_k
+
+END_DESCRIPTION
+
+Parameter_init_investment
+
+END_DESCRIPTION
+
+Parameter_init_mark_up_c
+
+END_DESCRIPTION
+
+Parameter_init_policy_interest_rate
+
+END_DESCRIPTION
+
+Parameter_init_productivity_c
+
+END_DESCRIPTION
+
+Parameter_init_productivity_k
+
+END_DESCRIPTION
+
+Parameter_init_share_consumption
+
+END_DESCRIPTION
+
+Parameter_init_share_investment
+
+END_DESCRIPTION
+
+Parameter_init_total_c_firms
+
+_INIT_
+All 1 instances equal to 200
+END_DESCRIPTION
+
+Parameter_init_total_k_firms
+
+_INIT_
+All 1 instances equal to 50
+END_DESCRIPTION
+
+Parameter_init_unemployment_rate
+
+_INIT_
+All 1 instances equal to 0.01
+END_DESCRIPTION
+
+Parameter_init_wage
+
+_INIT_
+All 1 instances equal to 10
+END_DESCRIPTION
+
+Parameter_tA0
+
+END_DESCRIPTION
+
+Variable_carbon_concentrarion
+UNIT: tons of CO2
+		
+		Concentration of CO2 in the atmosphere
+END_DESCRIPTION
+
+Variable_check_flows_bank
+UNIT: percentage points
+
+	 		Checks the consistency of bank's flows 
+
+	 		organization:
+				v[20] - v[29] > source of funds
+				v[31] - v[39] > use of funds
+END_DESCRIPTION
+
+Variable_check_flows_consumption
+UNIT: percentage points
+
+			Equation that checks whether the total value of realized consumption by HHs from the domestic sector is equal to the total of sales of domestic firms to HHs (aggregate values)
+END_DESCRIPTION
+
+Variable_check_flows_deposits
+UNIT: percentage points
+
+			Checks whether total change in deposits is equal to change in deposits held at bank
+END_DESCRIPTION
+
+Variable_check_flows_firm_c
+UNIT: percentage points
+
+			Checks the consistency of C firms' flows. Adjusts values by considering also firms that exited the market.
+END_DESCRIPTION
+
+Variable_check_flows_firm_k
+UNIT: percentage points
+
+			Checks the consistency of K firm's flows 
+
+			organization:
+				v[20] - v[29] > source of funds
+				v[31] - v[39] > use of funds
+END_DESCRIPTION
+
+Variable_check_flows_government
+UNIT: percentage points
+
+	 		Checks the consistency of government's flows (without considering the CB)
+
+	 		organization:
+				v[20] - v[29] > source of funds
+				v[31] - v[39] > use of funds
+END_DESCRIPTION
+
+Variable_check_flows_hh
+UNIT: percentage points
+
+			Checks the consistency in households' flows 
+			
+			organization:
+				v[20] -- v[29] > source of funds
+				v[31] -- v[39] > use of funds
+END_DESCRIPTION
+
+Variable_check_flows_loan
+UNIT: percentage points
+
+	 		Checks whether total change in loans is equal to total change in loans held at the bank
+END_DESCRIPTION
+
+Variable_check_flows_profits
+UNIT: Percentage points
+
+			Checks whether total of profits distributed is equal to total of profits received as dividends
+END_DESCRIPTION
+
+Variable_check_flows_wages
+UNIT: Percentage points
+
+			Checks whether total of wages paid is equal to total of wages received
+END_DESCRIPTION
+
+Variable_check_macro_aggregates
+UNIT: percentage points
+
+		Error in macro aggregates -> equality between demand and expenditure approaches
+END_DESCRIPTION
+
+Variable_check_macro_aggregates_real
+UNIT: percentage points
+
+		Error in macro aggregates -> compares real production with real expenditure
+END_DESCRIPTION
+
+Variable_check_sales
+UNIT: percentage points 
+
+		Equation that checks whether the firm's production is equal to its sales and change in inventories (in real terms) -> if 0: ok, else: there is a problem!
+END_DESCRIPTION
+
+Variable_check_stocks_bank
+
+END_DESCRIPTION
+
+Variable_check_stocks_deposits
+UNIT: percentage points
+
+			Checks whether deposits stock match
+END_DESCRIPTION
+
+Variable_check_stocks_loan
+UNIT: percentage points
+
+			Checks whether loans stocks match
+END_DESCRIPTION
+
+Variable_checks
+UNIT: percentage
+
+		Sums all checks (which are in percentages of the variables tested): if it is zero, all is fine
+END_DESCRIPTION
+
+Variable_cpi
+UNIT: index
+
+		Consumer Price Index
+END_DESCRIPTION
+
+Variable_cpi_base
+UNIT: index
+
+		Updates the price level in the first period (will become a parameter after t=1)
+END_DESCRIPTION
+
+Variable_damage_shock_productivity
+UNIT: irrelevant
+		
+		Establish the environmental shock in the period
+END_DESCRIPTION
+
+Variable_demand_c_nominal
+UNIT: monetary unit
+
+		Sum of demand for goods from all classes (before market shares are calculated)
+END_DESCRIPTION
+
+Variable_demand_c_real
+
+END_DESCRIPTION
+
+Variable_emissions
+UNIT: tons of CO2 
+		
+		Aggregate emissions in the economy
+END_DESCRIPTION
+
+Variable_emissions_coefficient
+UNIT: tons of CO2 per output
+		
+		Aggregate emissions coefficient in the economy
+END_DESCRIPTION
+
+Variable_gdp_growth
+UNIT: rate
+
+		Growth rate of real output
+END_DESCRIPTION
+
+Variable_gdp_nominal
+UNIT: monetary units
+
+		GDP in nominal terms from the income approach
+END_DESCRIPTION
+
+Variable_gdp_nominal_demand_approach
+UNIT: monetary units
+
+		GDP in nominal terms from the demand approach (demand for goods produced in the domestic sector)
+END_DESCRIPTION
+
+Variable_gdp_real
+UNIT: real value
+
+		real GDP from production approach
+END_DESCRIPTION
+
+Variable_gdp_real_demand_approach
+UNIT: real value
+
+		real GDP from demand approach
+END_DESCRIPTION
+
+Variable_inflation
+UNIT: decimals
+
+		Consumer price inflation
+END_DESCRIPTION
+
+Variable_inflation_change
+UNIT: rate
+		
+		Average Productivity growth rate
+END_DESCRIPTION
+
+Variable_initialization
+
+END_DESCRIPTION
+
+Variable_initialization_c_firms
+
+END_DESCRIPTION
+
+Variable_initialization_financial
+
+END_DESCRIPTION
+
+Variable_initialization_government
+
+END_DESCRIPTION
+
+Variable_initialization_households
+
+END_DESCRIPTION
+
+Variable_initialization_k_firms
+
+END_DESCRIPTION
+
+Variable_initialization_market
+
+END_DESCRIPTION
+
+Variable_loans_to_gdp
+UNIT: rate
+		
+		Wage bill over nominal GDP
+END_DESCRIPTION
+
+Variable_productivity_avg
+UNIT: goods per workers
+		
+		Average labor productivy in the economy (Total Labor Productivity)
+END_DESCRIPTION
+
+Variable_productivity_change
+UNIT: rate
+		
+		Average Productivity growth rate
+END_DESCRIPTION
+
+Variable_profits_gross_nominal
+UNIT: monetary units
+
+		Aggregate profits from accounting point of view in national accounts (see Godley and Lavoie 2012 page 262)
+END_DESCRIPTION
+
+Variable_timeStep
+Execute one time-step of one country 
+Ensure the high-level scheduling of the model equation by forcing the
+computation of key variables in the correct order
+In principle, the sequence defined here is embedded in the equations, so this
+equation is supposedly unnecessary (but may produce slightly different results)
+END_DESCRIPTION
+
+Variable_wage_share
+UNIT: rate
+		
+		Wage bill over nominal GDP
+END_DESCRIPTION
+
+Variable_initialization_parameters
+
+END_DESCRIPTION
+
+Variable_nominal_gdp_growth
+UNIT: rate
+
+		Growth rate of real output
+END_DESCRIPTION
+
+Parameter_init_gdp_growth
+
+END_DESCRIPTION
+
+Variable_shock
+UNIT: irrelevant
+		
+		Experiments shocks
+END_DESCRIPTION
+
+Variable_profit_share
+UNIT: rate
+		
+		Wage bill over nominal GDP
+END_DESCRIPTION
+
+Parameter_flag_scenario2
+
+END_DESCRIPTION
+
+Parameter_flag_scenario3
+
+END_DESCRIPTION
+
+Parameter_flag_scenario4
+
+END_DESCRIPTION
+
+Parameter_flag_scenario5
+
+END_DESCRIPTION
+
+Parameter_flag_scenario6
+
+END_DESCRIPTION
+
+Parameter_flag_scenario7
+
+END_DESCRIPTION
+
+Parameter_flag_scenario8
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Parameter_flag_scenario9
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Parameter_flag_scenario10
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Parameter_flag_scenario11
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Parameter_flag_scenario12
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Parameter_flag_scenario13
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Parameter_flag_scenario14
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Parameter_flag_scenario15
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Variable_consumption_growth
+UNIT: rate
+
+Growth rate of real outputUNIT: rate
+
+Growth rate of real output
+END_DESCRIPTION
+
+Variable_investment_growth
+UNIT: rate
+
+	Growth rate of real outputUNIT: rate
+
+	Growth rate of real output
+END_DESCRIPTION
+
+Object_k_sector
+
+END_DESCRIPTION
+
+Parameter_dividends_target_k
+
+END_DESCRIPTION
+
+Parameter_gamma
+
+END_DESCRIPTION
+
+Parameter_green_innovation_alpha
+
+END_DESCRIPTION
+
+Parameter_green_innovation_beta
+
+END_DESCRIPTION
+
+Parameter_green_innovation_easiness
+
+END_DESCRIPTION
+
+Parameter_green_innovation_inf
+
+END_DESCRIPTION
+
+Parameter_green_innovation_sup
+
+END_DESCRIPTION
+
+Parameter_innovation_alpha
+
+END_DESCRIPTION
+
+Parameter_innovation_beta
+
+END_DESCRIPTION
+
+Parameter_innovation_easiness
+
+END_DESCRIPTION
+
+Parameter_innovation_inf
+
+END_DESCRIPTION
+
+Parameter_innovation_sup
+
+END_DESCRIPTION
+
+Parameter_manager_per_worker_k
+
+END_DESCRIPTION
+
+Parameter_mark_up_k
+
+_INIT_
+All 1 instances equal to 0.5
+END_DESCRIPTION
+
+Parameter_psi_productivity_k
+
+END_DESCRIPTION
+
+Parameter_nu
+
+END_DESCRIPTION
+
+Variable_clients_new_k
+UNIT: number of consumption firms (clients)
+		
+		Sum of the new clients foe each K firm
+END_DESCRIPTION
+
+Variable_cost_managers_k
+UNIT: monetary units
+		
+		Aggregate cost with managers in K sector
+END_DESCRIPTION
+
+Variable_cost_unit_production_k_avg
+UNIT: monetary units
+		
+		 Average cost per unit produced in K sector
+END_DESCRIPTION
+
+Variable_cost_workers_k
+UNIT: monetary units
+		
+		Aggregate cost with workers in K sector
+END_DESCRIPTION
+
+Variable_deposits_k
+UNIT: monetary units
+		
+		Aggregate deposits in K sector
+END_DESCRIPTION
+
+Variable_emissions_k
+UNIT:  tons of CO2 
+		
+		Aggregate emissions in K sector
+END_DESCRIPTION
+
+Variable_green_k
+UNIT: number of green firms
+		
+		Set the dummy for K firms green status (with lowest green emissions coef) 
+		Counts the number of green firms (must be equal to green_treshold% of K firms)
+END_DESCRIPTION
+
+Variable_green_productivity_c_new_avg
+UNIT: number of emissions per consumption good produced
+		
+		Average green productivity in the C goods sector for new capital goods
+END_DESCRIPTION
+
+Variable_green_productivity_c_new_max
+UNIT: number of capital goods
+		
+		Max productivity in the C goods sector for new capital goods
+END_DESCRIPTION
+
+Variable_green_productivity_k_average
+UNIT:  tons of CO2 
+		
+		Aggregate emissions in K sector
+END_DESCRIPTION
+
+Variable_green_productivity_k_avg
+UNIT: number of emissions per capital good produced
+		
+		Average green productivity in the K goods sector
+END_DESCRIPTION
+
+Variable_managers_k_demand
+UNIT: number of workers
+		
+		Aggregate demand for managers in K sector
+END_DESCRIPTION
+
+Variable_managers_k_employed
+UNIT: number of workers
+		
+		Aggregate demand for managers in K sector
+END_DESCRIPTION
+
+Variable_price_k_avg
+UNIT: monetary units
+		
+		 Average price of capital goods
+END_DESCRIPTION
+
+Variable_price_k_max
+UNIT: monetary units
+		
+		 Average price of capital goods
+END_DESCRIPTION
+
+Variable_production_canceled_k
+UNIT: number of capital goods
+		
+		Aggregate effective prodcution in the K goods sector
+END_DESCRIPTION
+
+Variable_production_desired_k
+UNIT: number of capital goods
+		
+		Aggregate desired prodcution in the K goods sector
+END_DESCRIPTION
+
+Variable_production_k
+UNIT: number of capital goods
+		
+		Aggregate effective prodcution in the K goods sector
+END_DESCRIPTION
+
+Variable_productivity_c_new_avg
+UNIT: number of capital goods
+		
+		Average productivity in the C goods sector for new capital goods
+END_DESCRIPTION
+
+Variable_productivity_c_new_max
+UNIT: number of capital goods
+		
+		Max productivity in the C goods sector for new capital goods
+END_DESCRIPTION
+
+Variable_productivity_c_new_min
+UNIT: number of capital goods
+		
+		Min productivity in the C goods sector for new capital goods
+END_DESCRIPTION
+
+Variable_productivity_k_avg
+UNIT: number of capital goods
+		
+		Average productivity in the C goods sector
+END_DESCRIPTION
+
+Variable_profits_distributed_k
+UNIT: monetary units
+
+		Aggregate distributed profits from the K sector
+END_DESCRIPTION
+
+Variable_research_cost_k
+UNIT: monetary units
+		
+		Aggregate cost with researchers in K sector
+END_DESCRIPTION
+
+Variable_researchers_k_demand
+UNIT: number of researchers
+		
+		Aggregate demand for researchers in K sector
+END_DESCRIPTION
+
+Variable_researchers_k_employed
+UNIT: number of researchers
+		
+		 Aggregate employment of researchers in K sector
+END_DESCRIPTION
+
+Variable_sales_k_nominal
+UNIT: monetary units
+		
+		Aggregate sales in K sector
+END_DESCRIPTION
+
+Variable_total_k_firms
+UNIT: number of firms
+		
+		Number of firms in K sector
+END_DESCRIPTION
+
+Variable_workers_k_demand
+UNIT: number of workers
+		
+		Aggregate demand for workers in K sector
+END_DESCRIPTION
+
+Variable_workers_k_employed
+UNIT: number of workers
+		
+		Aggregate employment of workers in K sector
+END_DESCRIPTION
+
+Variable_profits_gross_k
+UNIT: monetary units
+
+		Aggregate gross profits from the K sector
+END_DESCRIPTION
+
+Variable_cost_unit_production_k_average
+
+END_DESCRIPTION
+
+Variable_loan_k
+UNIT: monetary units
+		
+		Aggregate deposits in K sector
+END_DESCRIPTION
+
+Parameter_imitation_easiness
+
+END_DESCRIPTION
+
+Parameter_payback
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Parameter_xi
+
+END_DESCRIPTION
+
+Object_k_firms
+
+END_DESCRIPTION
+
+Parameter__id_firm_k
+
+_INIT_
+All 50 instances increasing from 1 with step 1
+END_DESCRIPTION
+
+Variable__clients_historical_k
+Number of historical client firms
+Also removes old, non-buying clients.
+END_DESCRIPTION
+
+Variable__clients_new_k
+Number of new client firms in the period.
+Also creates the client-supplier connecting objects.
+END_DESCRIPTION
+
+Variable__cost_managers_k
+UNIT: monetary units
+
+		Cost with employed workers in the capital goods sector
+END_DESCRIPTION
+
+Variable__cost_production_k
+UNIT: monetary units
+
+		Total production costs with wages (R&D costs are not considered)
+END_DESCRIPTION
+
+Variable__cost_unit_production_k
+UNIT: monetary units
+
+		Total unit costs of production.
+END_DESCRIPTION
+
+Variable__cost_workers_k
+UNIT: monetary units
+
+		Resources available for financing research (considering resources that will be used to hire indirect workers, already rounded down)
+END_DESCRIPTION
+
+Variable__deposits_k
+UNIT: monetary units
+
+		net profits of capital goods firms
+_INIT_
+All 50 instances equal to 2400
+END_DESCRIPTION
+
+Variable__dividends_k
+
+END_DESCRIPTION
+
+Variable__emissions_k
+UNIT: tons of CO2 
+Carbon emissions produced by firm in capital-good sector
+END_DESCRIPTION
+
+Variable__green_innovation_success
+UNIT: dummy variable 
+
+	Indicates whether the firm has access to innovation or not in the period (if = 1, firm has access)
+END_DESCRIPTION
+
+Variable__green_k
+
+END_DESCRIPTION
+
+Variable__green_productivity_c_innovation
+UNIT: Emissions per C good produced
+
+		Productivity of machines given by innovation process
+_INIT_
+All 50 instances equal to 40
+END_DESCRIPTION
+
+Variable__green_productivity_c_new
+UNIT: Emissions per C good produced
+
+		It represents the tons of Co2 emissions per goods produced if the new machine is used by the maximum number of workers
+_INIT_
+All 50 instances equal to 40
+END_DESCRIPTION
+
+Variable__green_productivity_k
+UNIT: Emissions per K good produced
+
+		It represents the number of machines produced by direct workers
+_INIT_
+All 50 instances equal to 40
+END_DESCRIPTION
+
+Variable__green_productivity_k_innovation
+UNIT: Emissions per K good produced
+
+		Productivity given by innovative process for machine production process
+_INIT_
+All 50 instances equal to 40
+END_DESCRIPTION
+
+Variable__innovation_success
+UNIT: dummy variable 
+
+	Indicates whether the firm has access to innovation or not in the period (if = 1, firm has access)
+END_DESCRIPTION
+
+Variable__managers_k_demand
+UNIT: number of workers
+
+		Sets the demand for managers by the capital goods firm according to the level of production in the current period
+END_DESCRIPTION
+
+Variable__managers_k_employed
+UNIT: number of workers
+
+		Sets the employed managers for K firm in the period
+END_DESCRIPTION
+
+Variable__managers_wage_k
+UNIT: monetary units
+		
+		Wage for managers with a premium from direct wage
+END_DESCRIPTION
+
+Variable__market_share_k
+UNIT: share
+
+		Market share of K firm in the K sector
+END_DESCRIPTION
+
+Variable__orders_k
+Potential demand (orders) received by a firm in capital-good sector
+END_DESCRIPTION
+
+Variable__price_k
+UNIT: monetary units
+
+		Firms set prices according to a mark-up applied to unit costs
+END_DESCRIPTION
+
+Variable__production_canceled_k
+UNIT: number of capital goods
+
+		Determines the total production of machines by the firm
+END_DESCRIPTION
+
+Variable__production_desired_k
+UNIT: number of capital goods
+
+		Determines the number of capital goods the firm wants to produced in the period according to the demand for investment goods received from the C firms.
+END_DESCRIPTION
+
+Variable__production_k
+UNIT: number of capital goods
+
+		Determines the total production of machines by the firm
+END_DESCRIPTION
+
+Variable__productivity_adoption
+UNIT: dummy variable
+
+		Indicates whether the firm will adopt the new technologies in case the innovative efforts are not independent. This variable takes 1 if yes and 0 otherwise.
+
+		It is only relevant in case adoption of new A and B is not independent.
+END_DESCRIPTION
+
+Variable__productivity_c_innovation
+UNIT: C goods per workers
+
+		Productivity of machines given by innovation process
+_INIT_
+All 50 instances equal to 2
+END_DESCRIPTION
+
+Variable__productivity_c_new
+UNIT: C goods per worker 
+
+		It represents the number of goods produced if the new machine is used by the maximum number of workers
+_INIT_
+All 50 instances equal to 2
+END_DESCRIPTION
+
+Variable__productivity_c_new_growth
+UNIT: rate
+
+		Growth rate of productivity of new machines
+END_DESCRIPTION
+
+Variable__productivity_k
+UNIT: number of (capital) goods per worker 
+
+		It represents the number of machines produced by direct workers
+_INIT_
+All 50 instances equal to 2
+END_DESCRIPTION
+
+Variable__productivity_k_growth
+UNIT: rate
+
+		Growth rate of productivity in K sector
+END_DESCRIPTION
+
+Variable__productivity_k_innovation
+UNIT: number of (capital) goods per worker 
+
+		Productivity given by innovative process for machine production process
+_INIT_
+All 50 instances equal to 2
+END_DESCRIPTION
+
+Variable__profits_distributed_k
+UNIT: monetary units
+
+		Distributed profits
+END_DESCRIPTION
+
+Variable__profits_gross_k
+UNIT: monetary units
+
+		Gross profits: nominal sales discounted by costs and taxes
+END_DESCRIPTION
+
+Variable__profits_net_k
+UNIT: monetary units
+
+		Net profits of capital goods firms
+END_DESCRIPTION
+
+Variable__research_budget_k
+UNIT: monetary units
+		
+		 Available resources for research
+END_DESCRIPTION
+
+Variable__research_cost_k
+UNIT: monetary units
+
+		Resources available for financing research (considering resources that will be used to hire indirect workers, already rounded down)
+END_DESCRIPTION
+
+Variable__research_wage_k
+UNIT: monetary units
+		
+		Wage for researchers with a premium from direct wage
+END_DESCRIPTION
+
+Variable__researchers_k_demand
+UNIT: number of researchers
+
+		Demand for researchers by the firm: depends on the previous period revenue
+END_DESCRIPTION
+
+Variable__researchers_k_employed
+UNIT: number of researchers
+
+		Number of researchers hired at the firm
+END_DESCRIPTION
+
+Variable__sales_k_nominal
+UNIT: monetary units
+
+		Revenue of the capital goods firm
+END_DESCRIPTION
+
+Variable__taxes_sales_paid_k
+UNIT: monetary units
+		
+		Taxes paid by firm sales by the capital goods firm
+END_DESCRIPTION
+
+Variable__wage_k
+UNIT: monetary units
+		
+		Wage paid by a firm K to direct workers
+END_DESCRIPTION
+
+Variable__workers_k_demand
+UNIT: number of workers
+
+		Sets the demand for workers by the capital goods firm according to the level of production in the current period
+END_DESCRIPTION
+
+Variable__workers_k_employed
+UNIT: number of workers
+
+		Sets the employed workers for K firm in the period
+END_DESCRIPTION
+
+Variable__wage_k_growth
+
+END_DESCRIPTION
+
+Variable__green_price_subsidie_k
+
+END_DESCRIPTION
+
+Variable__loan_k
+
+END_DESCRIPTION
+
+Variable__green_research_subsidie
+
+END_DESCRIPTION
+
+Variable__green_research_subsidie_share
+
+END_DESCRIPTION
+
+Variable__check_flows_firm_k
+UNIT: percentage points
+
+			Checks the consistency of K firm's flows 
+
+			organization:
+				v[20] - v[29] > source of funds
+				v[31] - v[39] > use of funds
+END_DESCRIPTION
+
+Variable__imitation_k
+UNIT: no unit
+		
+		Update innovation parameters if imitation is more sucessfull variables
+END_DESCRIPTION
+
+Object_clients
+
+END_DESCRIPTION
+
+Parameter___IDc
+
+_INIT_
+All 50 instances equal to 0
+END_DESCRIPTION
+
+Parameter___nCan
+
+END_DESCRIPTION
+
+Parameter___nOrd
+
+END_DESCRIPTION
+
+Parameter___tOrd
+
+END_DESCRIPTION
+
+Parameter___tSel
+
+END_DESCRIPTION
+
+Object_c_sector
+
+END_DESCRIPTION
+
+Parameter_capacity_ut_normal
+
+END_DESCRIPTION
+
+Parameter_delta
+
+_INIT_
+All 1 instances equal to 0.1
+END_DESCRIPTION
+
+Parameter_dividends_target_c
+
+END_DESCRIPTION
+
+Parameter_entry_periods_safe_c
+
+END_DESCRIPTION
+
+Parameter_exit_inventories_destroyed
+
+END_DESCRIPTION
+
+Parameter_exit_market_share_min_c
+
+END_DESCRIPTION
+
+Parameter_inventories_desired_share
+
+END_DESCRIPTION
+
+Parameter_manager_per_worker_c
+
+END_DESCRIPTION
+
+Parameter_mark_up_min_c
+
+END_DESCRIPTION
+
+Parameter_min_capital_delete
+
+END_DESCRIPTION
+
+Parameter_profits_distributed_periods
+
+END_DESCRIPTION
+
+Parameter_psi_productivity_c
+
+END_DESCRIPTION
+
+Parameter_gamma_a
+
+END_DESCRIPTION
+
+Parameter_gamma_u
+
+END_DESCRIPTION
+
+Parameter_sensitivity_competitiveness_price
+
+END_DESCRIPTION
+
+Parameter_sensitivity_competitiveness_unfilled_demand
+
+END_DESCRIPTION
+
+Parameter_sensitivity_demand_sales1
+
+END_DESCRIPTION
+
+Parameter_sensitivity_demand_sales2
+
+END_DESCRIPTION
+
+Parameter_sensitivity_demand_sales3
+
+END_DESCRIPTION
+
+Parameter_sensitivity_demand_sales4
+
+END_DESCRIPTION
+
+Parameter_sensitivity_mark_up_market_share_c
+
+END_DESCRIPTION
+
+Parameter_sensitivity_market_share_competitiveness
+
+_INIT_
+All 1 instances equal to 1
+END_DESCRIPTION
+
+Function_firmCmap
+
+END_DESCRIPTION
+
+Variable_capacity_ut_c
+UNIT: rate
+		
+		Capacity utilization in the C sector
+END_DESCRIPTION
+
+Variable_capital_stock_c
+UNIT: number of capital goods
+		
+		Aggregate capital stock
+END_DESCRIPTION
+
+Variable_competitiveness_average_c
+UNIT: irrelevant
+
+		Average competitiveness of C goods firms weighted by their previous market share
+END_DESCRIPTION
+
+Variable_cost_investment_nominal_c
+UNIT: monetary units
+		
+		Aggregate cost of investment in C sector
+END_DESCRIPTION
+
+Variable_cost_managers_c
+UNIT: monetary units
+		
+		Aggregate cost with workers in K sector
+END_DESCRIPTION
+
+Variable_cost_workers_c
+UNIT: monetary units
+		
+		Aggregate cost with workers in K sector
+END_DESCRIPTION
+
+Variable_deposits_c
+UNIT: monetary units
+		
+		Aggregate deposits in C sector
+END_DESCRIPTION
+
+Variable_emissions_c
+UNIT: tons of CO2
+		
+		Emissions from producing in the consumption goods sector
+END_DESCRIPTION
+
+Variable_entry_c
+UNIT: number of firms
+
+		Entry of new firms (one to one replacement)
+END_DESCRIPTION
+
+Variable_exit_c
+UNIT: number of firms
+
+		Exit dynamics of consumption goods firms
+END_DESCRIPTION
+
+Variable_green_c
+UNIT: number of green firms
+		
+		Set the dummy for C firms green status (with lowest green emissions) 
+		Counts the number of green firms (must be equal to green_treshold% of C firms)
+END_DESCRIPTION
+
+Variable_green_productivity_c_avg
+UNIT: number of emissions per consumption good produced
+		
+		Average effective green productivity in the C goods sector
+END_DESCRIPTION
+
+Variable_interest_paid_c
+UNIT: monetary units
+		
+		Aggregate interest payments in C sector
+END_DESCRIPTION
+
+Variable_inventories_c_real
+UNIT: number of goods
+
+		Sum of C firms' inventories
+END_DESCRIPTION
+
+Variable_inventories_c_real_change
+UNIT: number of goods
+
+		Change in real inventories
+END_DESCRIPTION
+
+Variable_investment_demand_c
+UNIT: number of capital goods
+		
+		Number of capital good demand in aggregate
+END_DESCRIPTION
+
+Variable_investment_desired_expansion_c
+UNIT: number of capital goods
+		
+		Number of capital good demand in aggregate
+END_DESCRIPTION
+
+Variable_investment_desired_substitution_c
+UNIT: number of capital goods
+		
+		Number of capital good demand in aggregate
+END_DESCRIPTION
+
+Variable_investment_realized_c
+UNIT: number of capital goods
+		
+		Number of capital good demand in aggregate
+END_DESCRIPTION
+
+Variable_loan_c
+UNIT: monetary units
+		
+		Aggregate sales in C sector
+END_DESCRIPTION
+
+Variable_loan_c_demand
+UNIT: monetary units
+		
+		Aggregate loans in C sector
+END_DESCRIPTION
+
+Variable_managers_c_demand
+UNIT: number of workers
+
+		Number of managers demand in the C sectors
+END_DESCRIPTION
+
+Variable_managers_c_employed
+
+END_DESCRIPTION
+
+Variable_market_share_c_rescale
+UNIT: irrelevant
+
+		Equation that corrects the firms' market shares so that sum = 1. This occurs before the consumption goods market opens and only affects the domestic firms' market shares
+END_DESCRIPTION
+
+Variable_order_equations_c_sector
+Equation that guarantees that key variables in the C and other sectors are calculated BEFORE entry/exit dynamics in C sector. This equation is placed at the C sector.
+END_DESCRIPTION
+
+Variable_price_c_average_before_ms
+UNIT: monetary units
+
+		Average price level in the consumption goods market (only considering domestic firms). It is the value before the market shares are updated and is used to calculate firms' competitiveness levels.
+END_DESCRIPTION
+
+Variable_price_c_average_before_sales
+UNIT: monetary units
+
+		Average price level of consumption goods before sales - weighted by current market shares. In an open economy, it also considers the price of foreign goods (which will be imported)
+END_DESCRIPTION
+
+Variable_price_c_average_consumer
+UNIT: monetary units
+
+		Average price actually paid by consumer (after sales take place). This may be different from prices before sales because the composition of supply may be different from that of sales (some firms may not have enough supply to cover demanded goods). This also considers the imported goods by the households (which are equal to zero in case of a closed economy)
+END_DESCRIPTION
+
+Variable_price_c_max
+
+END_DESCRIPTION
+
+Variable_price_c_min
+
+END_DESCRIPTION
+
+Variable_production_c
+UNIT: number of cpnsumption goods
+		
+		Number of capital goods produced in aggregate
+END_DESCRIPTION
+
+Variable_production_c_nominal
+UNIT: monetary unit
+
+		Aggregate supply in nominal terms
+END_DESCRIPTION
+
+Variable_production_c_real
+
+END_DESCRIPTION
+
+Variable_productivity_c_avg
+UNIT: number of capital goods
+		
+		Average effective productivity in the C goods sector
+END_DESCRIPTION
+
+Variable_profits_distributed_c
+UNIT: monetary units
+
+		Aggregate distributed profits from the C sector
+END_DESCRIPTION
+
+Variable_sales_c_nominal
+UNIT: monetary units
+		
+		Aggregate sales in C sector
+END_DESCRIPTION
+
+Variable_sales_c_real
+UNIT: number of cpnsumption goods
+		
+		Number of capital goods sold in aggregate
+END_DESCRIPTION
+
+Variable_taxes_sales_paid_k
+UNIT: monetary units
+		
+		Aggregate sales taxes paid by K sector
+END_DESCRIPTION
+
+Variable_total_c_firms
+UNIT: number of firms
+		
+		Number of firms in C sector
+END_DESCRIPTION
+
+Variable_unfilled_demand_c_average
+UNIT: number of goods
+
+		Average unfilled demand in consumption goods market (in the previous period)
+END_DESCRIPTION
+
+Variable_unfilled_demand_c_max
+
+END_DESCRIPTION
+
+Variable_unfilled_demand_c_min
+
+END_DESCRIPTION
+
+Variable_workers_c_demand
+UNIT: number of workers
+
+		Number of workers demand in the C sectors
+END_DESCRIPTION
+
+Variable_workers_c_employed
+UNIT: number of workers
+
+		Number of workers employed in the C sectors
+END_DESCRIPTION
+
+Variable_workers_wage_c_avg
+UNIT: monetary units
+		
+		Average effective productivity in the C goods sector
+END_DESCRIPTION
+
+Variable_cost_unit_production_c_avg
+UNIT: monetary units
+		
+		Aggregate cost with workers in C sector
+END_DESCRIPTION
+
+Variable_profits_gross_c
+UNIT: monetary units
+
+		Aggregate gross profits from the C sector
+END_DESCRIPTION
+
+Variable_investment_realized_net_c
+UNIT: number of capital goods
+		
+		Number of net capital goods sold in aggregate
+END_DESCRIPTION
+
+Object_c_firms
+
+END_DESCRIPTION
+
+Parameter__date_entry_c
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Parameter__id_firm_c
+
+_INIT_
+All 200 instances increasing from 1 with step 1
+END_DESCRIPTION
+
+Variable__brochures
+
+END_DESCRIPTION
+
+Variable__capacity_ut_c
+UNIT: rate.
+		
+		Capacity utilization rate in the current period
+END_DESCRIPTION
+
+Variable__capacity_ut_desired_c
+UNIT: rate
+		
+		Desired capacity utilization of a firm in consumption-good sector
+END_DESCRIPTION
+
+Variable__capital_stock_c
+UNIT: number of K goods
+		
+		Stock of capital in all vintages for each K Firm
+_INIT_
+All 200 instances drawn from uniform distribution between 100 and 500
+END_DESCRIPTION
+
+Variable__competitiveness_c
+UNIT: irrelevant
+
+		Firm's competitiveness in the goods market: depends on price level and unfilled demand. Values are normalized to [0.1, 0.9]: zero competitiveness is avoided to prevent direct exit of worst firms in replicator dynamics (as in KS model)
+END_DESCRIPTION
+
+Variable__cost_emissions_expected_c
+UNIT: monetary units
+
+		Indicates the expected cost with emissions, before the financial restrictions upon the firm are considered
+END_DESCRIPTION
+
+Variable__cost_investment_budget
+
+END_DESCRIPTION
+
+Variable__cost_investment_c
+UNIT: monetary units
+
+		Effective investment cost
+END_DESCRIPTION
+
+Variable__cost_investment_expected_c
+UNIT: monetary units
+
+		Cost of desired investment by the firm
+END_DESCRIPTION
+
+Variable__cost_loan_interest_due
+
+END_DESCRIPTION
+
+Variable__cost_loan_repayment_budget_c
+
+END_DESCRIPTION
+
+Variable__cost_loan_repayment_due_c
+UNIT: monetary units
+
+		Amount of loans that needs to be repaid by the firm to the bank in the beginning of the current period
+END_DESCRIPTION
+
+Variable__cost_managers_c
+UNIT: monetary units
+
+		Cost with employed managers in the consumption goods sector
+END_DESCRIPTION
+
+Variable__cost_managers_expected_c
+UNIT: monetary units
+
+		Indicates the expected cost with managers, before the financial restrictions upon the firm are considered
+END_DESCRIPTION
+
+Variable__cost_production_budget_c
+
+END_DESCRIPTION
+
+Variable__cost_production_c
+UNIT: monetary units
+
+		Total production costs with wages
+END_DESCRIPTION
+
+Variable__cost_production_expected_c
+UNIT: monetary units
+
+		Computes the labor costs that the firm expects to face if it produces the level of production determined before financial restrictions are taken into account
+END_DESCRIPTION
+
+Variable__cost_unit_production_c
+UNIT: monetary units
+
+		Effective unit costs before hiring and effective demand.
+END_DESCRIPTION
+
+Variable__cost_unit_production_c_expected
+UNIT: monetary units
+
+		Expected unit costs before hiring and effective demand.
+END_DESCRIPTION
+
+Variable__cost_workers_c
+UNIT: monetary units
+
+		Cost with employed workers in the consumption goods sector
+END_DESCRIPTION
+
+Variable__cost_workers_expected_c
+UNIT: monetary units
+
+		Indicates the expected cost with workers, before the financial restrictions upon the firm are considered
+END_DESCRIPTION
+
+Variable__creation_new_vintage
+UNIT: number of capital goods
+
+		Returns the realized investment. It also creates the vintage with the new capital
+END_DESCRIPTION
+
+Variable__delete_vintage
+UNIT: number of capital goods
+		
+		Delete too depreciated vintages
+END_DESCRIPTION
+
+Variable__deleted_capital
+
+END_DESCRIPTION
+
+Variable__demand_c_growth
+UNIT: rate
+
+		Growth rate of the demand for the firm's production
+END_DESCRIPTION
+
+Variable__demand_c_real
+
+_INIT_
+All 200 instances drawn from uniform distribution between 100 and 500
+END_DESCRIPTION
+
+Variable__deposit_left_loan_c
+
+END_DESCRIPTION
+
+Variable__deposits_c
+UNIT: monetary units
+
+		Deposits kept at the bank at the end of the period
+END_DESCRIPTION
+
+Variable__dividends_c
+
+END_DESCRIPTION
+
+Variable__emissions_c
+
+END_DESCRIPTION
+
+Variable__emissions_c_expected
+
+END_DESCRIPTION
+
+Variable__green_c
+
+END_DESCRIPTION
+
+Variable__green_productivity_vintage_average
+UNIT: tons of CO2 per C good produced
+		
+		Average green productivity in the stock of capital from C firm
+END_DESCRIPTION
+
+Variable__inventories_c
+
+_INIT_
+All 200 instances drawn from uniform distribution between 0 and 50
+END_DESCRIPTION
+
+Variable__inventories_share_c
+UNIT: ratio
+
+		Inventories as a share of sales
+END_DESCRIPTION
+
+Variable__investment_canceled_c
+UNIT: number of capital goods
+	
+		Canceled investment of firm in consumption-good sector
+END_DESCRIPTION
+
+Variable__investment_demand_c
+UNIT: number of capital goods
+
+		Number of capital goods effectively demanded, after financial restrictions are applied
+END_DESCRIPTION
+
+Variable__investment_desired_c
+UNIT: number of capital goods.
+		 
+		Number of capital goods to be desired in the current period (still to be adjusted by financial restrictions)
+END_DESCRIPTION
+
+Variable__investment_desired_expansion_c
+UNIT: number of K goods
+		
+		Desired expansion investment of firm in consumption-good sector
+END_DESCRIPTION
+
+Variable__investment_desired_substitution_c
+UNIT: number of K goods
+		
+		Desired expansion investment of firm in consumption-good sector
+END_DESCRIPTION
+
+Variable__investment_realized_c
+UNIT: number of capital goods
+	
+		Realized investment of firm in consumption-good sector
+END_DESCRIPTION
+
+Variable__loan_c
+UNIT: monetary units
+
+		Total amount of outstanding loans in the period
+END_DESCRIPTION
+
+Variable__loan_c_demand
+
+END_DESCRIPTION
+
+Variable__loan_constrained_c_dummy
+
+END_DESCRIPTION
+
+Variable__loan_new_c
+UNIT: monetary units
+
+		Total of loans to the firm. Also updates budget for each type of activity
+END_DESCRIPTION
+
+Variable__managers_c_demand
+
+END_DESCRIPTION
+
+Variable__managers_c_desired
+
+END_DESCRIPTION
+
+Variable__managers_c_employed
+UNIT: number of workers
+		
+		Effective number of workers available to production of c goods
+END_DESCRIPTION
+
+Variable__managers_wage_c
+UNIT: monetary units
+		
+		Wage for managers with a premium from direct wage
+END_DESCRIPTION
+
+Variable__mark_up_c
+UNIT: ratio
+
+		Effective mark-up charged by the firm
+END_DESCRIPTION
+
+Variable__mark_up_desired_c
+UNIT: ratio
+
+		Desired mark-up ratio taking into consideration competition in C market
+END_DESCRIPTION
+
+Variable__market_share_c
+
+END_DESCRIPTION
+
+Variable__market_share_c_before_rescale
+UNIT: ratio
+
+		Firm's market share (of nominal consumption demand) - this is a preliminary value (yet to be adjusted by ms rescale)
+END_DESCRIPTION
+
+Variable__market_share_effective_c
+UNIT: ratio
+
+		Effective market share in the period (only considering domestic firms). This is the firms' realize proportion of real sales in the period (can differ from market share due to lack of supply)
+END_DESCRIPTION
+
+Variable__price_c
+UNIT: monetary units
+
+		Price charged by the firm on its consumption goods. It considers the mark-up defined in the C goods market and in relation to workers. Equation also allows price reviews to be separated from price adjustments, which will depend on a tolerance band around the reference mark-up level - to deactivate this mechanism just set mark_up_deviation_c = 0.
+END_DESCRIPTION
+
+Variable__production_c
+UNIT: number of goods
+
+		Number of goods effectively produced by the firm, after direct workers were hired
+END_DESCRIPTION
+
+Variable__production_desired_c
+UNIT: number of consumption goods
+
+		Desired level of production for the current period: already limited by the firm's capital stock
+END_DESCRIPTION
+
+Variable__productivity_c
+
+END_DESCRIPTION
+
+Variable__productivity_c_growth
+UNIT: rate
+
+		Growth rate of productivity of new machines
+END_DESCRIPTION
+
+Variable__profits_distributed_c
+UNIT: monetary units
+
+ 		Amount of profits to be distributed to capitalists who own the firm: it depends on previous profits. It can be divided in a certain number of periods for smoothing.
+END_DESCRIPTION
+
+Variable__profits_gross_c
+UNIT: monetary units
+
+		Gross profits from accounting point of view
+END_DESCRIPTION
+
+Variable__profits_net_c
+UNIT: monetary units 
+
+ 		Profits discounting interest payment and adding interest received from bank, change in inventories value (no capital amortization) - this is the amount of profits considered in dividends distribution
+END_DESCRIPTION
+
+Variable__revenue_average_c
+UNIT: monetary units
+
+		Average nominal revenue of the firm in previous periods (in current period price level).
+END_DESCRIPTION
+
+Variable__sales_c_nominal
+UNIT: monetary units
+
+		Nominal sales of C goods by the firm (revenue) - this considers both exports and imports
+END_DESCRIPTION
+
+Variable__sales_c_real
+UNIT: number of goods
+
+		Quantity sold by the firm. When it is an open economy, this equation also sets the share of exported goods by the firm.
+END_DESCRIPTION
+
+Variable__sales_expectations_c
+UNIT: number of consumption goods
+
+		Computes the firms' sales/demand expectations for the current period, which will be used for its production decisions
+END_DESCRIPTION
+
+Variable__supplier
+UNIT: K Firm id
+
+		Selected machine supplier by firm in consumption-good sector. Also set firm 'hook' pointers to supplier firm object
+END_DESCRIPTION
+
+Variable__taxes_sales_paid_c
+UNIT: monetary units
+		
+		Taxes paid by firm sales by the capital goods firm
+END_DESCRIPTION
+
+Variable__unfilled_demand_c
+UNIT: number of goods
+
+		Quantity of goods demanded from firm that it could not sell
+END_DESCRIPTION
+
+Variable__vintages
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Variable__wage_c
+UNIT: monetary units
+		
+		Wage paid by a firm K to direct workers
+END_DESCRIPTION
+
+Variable__workers_c_demand
+UNIT: number of workers
+
+		Sets the demand for workers by the consumption goods sector according to the level of production desired by the firm before taking into account the financial restrictions upon the firm. This value is updated in the open positions function later, wherein financial restrictions are considered.
+END_DESCRIPTION
+
+Variable__workers_c_desired
+UNIT: number of workers
+
+		Sets the demand for workers by the consumption goods sector according to the level of production desired by the firm before taking into account the financial restrictions upon the firm. This value is updated in the open positions function later, wherein financial restrictions are considered.
+END_DESCRIPTION
+
+Variable__workers_c_employed
+UNIT: number of workers
+		
+		Effective number of workers available to production of c goods
+END_DESCRIPTION
+
+Variable__wage_c_growth
+
+END_DESCRIPTION
+
+Variable__investment_realized_net_c
+
+END_DESCRIPTION
+
+Variable__green_price_subsidie_c
+
+END_DESCRIPTION
+
+Object_broch
+
+END_DESCRIPTION
+
+Parameter___IDs
+
+_INIT_
+All 200 instances equal to 0
+END_DESCRIPTION
+
+Object_vintage
+
+END_DESCRIPTION
+
+Parameter___green_productivity_vintage
+
+END_DESCRIPTION
+
+Parameter___init_capital_vintage
+
+END_DESCRIPTION
+
+Parameter___productivity_vintage
+
+END_DESCRIPTION
+
+Parameter___vintage_date
+
+END_DESCRIPTION
+
+Variable___capital_vintage
+UNIT: number of capital goods
+			
+		Returns the stock of capital in each vintage
+_INIT_
+All 200 instances drawn from uniform distribution between 100 and 500
+END_DESCRIPTION
+
+Variable___worker_vintage_max
+UNIT: number of workers
+
+		Indicates the maximum number of workers that can be allocated to all the vintage's machines so that it produces the maximum quantity. The lower this number is, the higher the vintage's productivity level
+END_DESCRIPTION
+
+Object_hh_sector
+
+END_DESCRIPTION
+
+Parameter_green_wage_premium
+
+_INIT_
+All 1 instances equal to 0.2
+END_DESCRIPTION
+
+Parameter_green_wage_shock
+
+END_DESCRIPTION
+
+Parameter_n
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Parameter_propensity_consume_dividends
+
+END_DESCRIPTION
+
+Parameter_propensity_consume_income
+
+END_DESCRIPTION
+
+Parameter_propensity_consume_wage
+
+END_DESCRIPTION
+
+Parameter_psi_inflation
+
+END_DESCRIPTION
+
+Parameter_psi_productivity
+
+END_DESCRIPTION
+
+Parameter_psi_unemployment
+
+END_DESCRIPTION
+
+Parameter_wage_premium
+
+_INIT_
+All 1 instances equal to 0.5
+END_DESCRIPTION
+
+Parameter_wage_shock
+
+_INIT_
+All 1 instances equal to 0.02
+END_DESCRIPTION
+
+Variable_capitalists
+UNIT: number of workers
+		
+		Total unemployed workers
+END_DESCRIPTION
+
+Variable_consumption_realized_hh
+UNIT: monetary units
+	
+		Realized nominal consumption by HH
+END_DESCRIPTION
+
+Variable_demand_consumption_hh
+UNIT: monetary units
+		
+		Total household consumption from wages and dividends
+END_DESCRIPTION
+
+Variable_deposits_hh
+UNIT: monetary units
+
+		Stock of savings
+END_DESCRIPTION
+
+Variable_dividends
+UNIT: monetary units
+		
+		Total dividends (distributed profits) received by households
+END_DESCRIPTION
+
+Variable_dividends_taxes
+UNIT: monetary units
+		
+		Total taxes paid from dividends
+END_DESCRIPTION
+
+Variable_gini_hh
+UNIT: index
+
+			Gini index including all households income
+END_DESCRIPTION
+
+Variable_income_disposable_hh
+UNIT: monetary units
+		
+		Total disposable income of households after taxes paid
+END_DESCRIPTION
+
+Variable_income_total_hh
+UNIT: monetary units
+		
+		Total pre tax income of households
+END_DESCRIPTION
+
+Variable_labor_demand
+UNIT: number of workers
+		
+		Labor demand from K and C firms (both brown and green)
+END_DESCRIPTION
+
+Variable_labor_employed
+UNIT: number of workers
+
+		Effective work force (labor) size, increase workforce if full employment
+END_DESCRIPTION
+
+Variable_labor_force
+
+_INIT_
+All 1 instances equal to 10000
+END_DESCRIPTION
+
+Variable_labor_restriction
+UNIT: ratio
+		
+		Labor restriction to be applied uniformelly at all firms
+END_DESCRIPTION
+
+Variable_labor_unemployed
+UNIT: number of workers
+		
+		Total unemployed workers
+END_DESCRIPTION
+
+Variable_total_taxes_hh
+UNIT: monetary units
+		
+		Total taxes paid from households
+END_DESCRIPTION
+
+Variable_unemployed_income
+UNIT: monetary units
+		
+		Total dunemployment benefits received from the government
+END_DESCRIPTION
+
+Variable_unemployment_change
+UNIT: rate
+		
+		Unemployment change rate
+END_DESCRIPTION
+
+Variable_unemployment_rate
+UNIT: monetary units
+		
+		Unemployment rate
+END_DESCRIPTION
+
+Variable_wage
+
+END_DESCRIPTION
+
+Variable_wage_bill
+UNIT: monetary units
+		
+		Total wage bill paid by firms
+END_DESCRIPTION
+
+Variable_wage_min
+UNIT: monnetary units
+		
+		Minimum wage only updated by inflation.
+END_DESCRIPTION
+
+Variable_wage_taxes
+UNIT: monetary units
+		
+		Total taxes paid from wages
+END_DESCRIPTION
+
+Variable_wage_unemployed
+UNIT: monetary units
+		
+		Unemployment benefit ("wage") paid by government
+END_DESCRIPTION
+
+Parameter_wage_sensitivity
+
+END_DESCRIPTION
+
+Variable_dividends_wage_ratio
+UNIT: monetary units
+		
+		Average wage of direct workers in C sector
+END_DESCRIPTION
+
+Variable_wage_demand_growth
+
+END_DESCRIPTION
+
+Parameter_psi_productivity_avg
+
+END_DESCRIPTION
+
+Variable_wage_sensitivity_hh
+UNIT: percentage
+		
+		Calculates workers bargaining power (endogenous)
+END_DESCRIPTION
+
+Variable_deposits_hh_over_gdp
+
+END_DESCRIPTION
+
+Variable_wealth_tax
+UNIT: monetary units
+		
+		Total taxes paid from wealth
+END_DESCRIPTION
+
+Variable_capitalists_income
+UNIT: monetary units
+		
+		Total capitalists income
+END_DESCRIPTION
+
+Variable_wealth_tax_to_gdp
+
+END_DESCRIPTION
+
+Object_government
+
+END_DESCRIPTION
+
+Variable_CO2_tax
+
+END_DESCRIPTION
+
+Parameter_RHO_0
+
+END_DESCRIPTION
+
+Parameter_RHO_u
+
+END_DESCRIPTION
+
+Parameter_dividends_tax_rate
+
+END_DESCRIPTION
+
+Parameter_flag_inf_target
+
+_INIT_
+All 1 instances equal to 0
+END_DESCRIPTION
+
+Parameter_inflation_target
+
+END_DESCRIPTION
+
+Parameter_interest_rate_min
+
+END_DESCRIPTION
+
+Parameter_interest_rate_persistence
+
+END_DESCRIPTION
+
+Parameter_it_regime_periods
+
+END_DESCRIPTION
+
+Parameter_sensitivity_interest_inflation_gap
+
+END_DESCRIPTION
+
+Parameter_sensitivity_interest_unemployment_gap
+
+END_DESCRIPTION
+
+Parameter_tax_rate_sales
+
+END_DESCRIPTION
+
+Parameter_unemployment_rate_target
+
+END_DESCRIPTION
+
+Parameter_wage_tax_rate
+
+END_DESCRIPTION
+
+Parameter_wage_unemployed_discount
+
+END_DESCRIPTION
+
+Variable_bonds_flow
+UNIT: monetary units
+
+		Change in stock of government bonds held by private sector.
+
+		Timeline of events (logic considered in this equation):
+			government pays interest on bonds 
+			government receives taxes on interest flow (interest payment)
+			government pays wages to public servants and unemployment dole and consumes
+			government receives taxes on income and sales
+			residual from these transactions form the government deposits at the CB
+END_DESCRIPTION
+
+Variable_bonds_interest_paid
+UNIT: monetary units 
+
+		Interest paid on stock of government bonds (both to CB and to bank)
+END_DESCRIPTION
+
+Variable_bonds_stock
+UNIT: monetary units
+
+		Total stock of government bonds
+END_DESCRIPTION
+
+Variable_bonds_stock_to_gdp
+UNIT: ratio
+
+		Government's debt as a ratio of GDP
+END_DESCRIPTION
+
+Variable_consumption_realized_gov
+UNIT: monetary units
+
+		Government consumption realized
+END_DESCRIPTION
+
+Variable_demand_consumption_government
+UNIT: monetary units
+		
+		Total government consumption demand (before possible supply constraint)
+END_DESCRIPTION
+
+Variable_gov_deposits_cb
+
+END_DESCRIPTION
+
+Variable_gov_result_nominal
+UNIT: monetary units
+
+		Government's superavit in the period (taxes - expenditures, including interest expenditures). This is the nominal result.
+
+		If < 0: deficit
+END_DESCRIPTION
+
+Variable_gov_result_nominal_to_gdp
+UNIT: ratio
+
+		Government's result as a ratio of GDP
+END_DESCRIPTION
+
+Variable_gov_result_primary
+UNIT: monetary units
+
+		Government's superavit in the period (taxes - expenditures, excluding interest expenditures). This is the primary result.
+
+		If < 0, government has a deficit
+END_DESCRIPTION
+
+Variable_gov_result_primary_to_gdp
+UNIT: ratio
+
+		Government's result as a ratio of GDP
+END_DESCRIPTION
+
+Variable_government_spending_realized
+UNIT: monetary units
+
+		Government expenditure (demand)
+END_DESCRIPTION
+
+Variable_green_bonds_stock
+UNIT: monetary units
+		
+		Aggregate value of green bonds in the market
+END_DESCRIPTION
+
+Variable_green_government_result_unajusted
+UNIT: monetary units
+		
+		Aggregate superavit from government in its green strategies.
+		
+		If < 0, deficit
+END_DESCRIPTION
+
+Variable_green_government_spending
+UNIT: monetary units
+		
+		Aggregate spending from government in its green strategies
+END_DESCRIPTION
+
+Variable_inflation_average
+UNIT: decimals
+
+		Consumer price inflation average (used for IT regime)
+END_DESCRIPTION
+
+Variable_policy_interest_rate
+
+END_DESCRIPTION
+
+Variable_taxes_emissions
+UNIT: monetary units
+		
+		Aggregate taxes received from firms based on emissions from production
+END_DESCRIPTION
+
+Variable_taxes_income
+UNIT: monetary units
+
+		Aggregate taxes received from HH based on their income
+END_DESCRIPTION
+
+Variable_taxes_revenue
+UNIT: monetary units
+
+		Sum of all types of taxes collected by the government (without green taxes)
+END_DESCRIPTION
+
+Variable_taxes_sales
+UNIT: monetary units
+
+		Aggregate taxes received from firms based on sales
+END_DESCRIPTION
+
+Variable_taxes_to_gdp
+UNIT: ratio
+
+		Participation of government's taxes on gdp
+END_DESCRIPTION
+
+Variable_unemployment_benefit_paid
+UNIT: monetary units
+
+		Unemployment benefit
+END_DESCRIPTION
+
+Variable_unemployment_rate_average
+UNIT: decimals
+
+	Unemployment rate (used for IT regime)
+END_DESCRIPTION
+
+Variable_gov_spending_to_gdp
+UNIT: ratio
+
+		Government's spending as a ratio of GDP
+END_DESCRIPTION
+
+Variable_gov_consumption_to_gdp
+UNIT: ratio
+
+		Government's consumption as a ratio of GDP
+END_DESCRIPTION
+
+Variable_unemployment_benefit_to_gdp
+UNIT: ratio
+
+		Unemployment benefit as a ratio of GDP
+END_DESCRIPTION
+
+Parameter_target_gov_size
+
+END_DESCRIPTION
+
+Variable_green_government_result
+
+END_DESCRIPTION
+
+Variable_green_government_result_to_gdp
+
+END_DESCRIPTION
+
+Variable_green_government_spending_to_gdp
+
+END_DESCRIPTION
+
+Variable_taxes_emissions_to_gdp
+
+END_DESCRIPTION
+
+Parameter_flag_green_lab
+
+END_DESCRIPTION
+
+Variable_green_lab_cost
+UNIT: 
+		
+		Active if green spending is used to fund a green lab. Hire researchers and set public innovation process.
+END_DESCRIPTION
+
+Variable_researchers_cost_g
+
+END_DESCRIPTION
+
+Variable_researchers_g_demand
+
+END_DESCRIPTION
+
+Variable_researchers_g_employed
+
+END_DESCRIPTION
+
+Variable_green_productivity_g
+
+END_DESCRIPTION
+
+Parameter_flag_green_price_subsidies
+
+END_DESCRIPTION
+
+Variable_green_price_subsidie
+
+END_DESCRIPTION
+
+Variable_green_price_subsidie_cost
+UNIT: monetary units 
+		
+		Active if green spending subsidies green capital firms
+END_DESCRIPTION
+
+Parameter_flag_green_research_subsidies
+
+END_DESCRIPTION
+
+Variable_green_research_subsidie
+
+END_DESCRIPTION
+
+Variable_green_research_subsidie_cost
+UNIT: monetary units 
+		
+		Active if research subsidies to green capital firms
+END_DESCRIPTION
+
+Variable_green_basic_income
+
+END_DESCRIPTION
+
+Variable_green_basic_income_cost
+UNIT: monetary units 
+		
+		Active if research subsidies to green capital firms
+END_DESCRIPTION
+
+Parameter_flag_green_basic_income
+
+END_DESCRIPTION
+
+Variable_research_wage_g
+
+END_DESCRIPTION
+
+Variable_green_transfer_cost
+UNIT: monetary units 
+		
+		Active if research subsidies to green capital firms
+END_DESCRIPTION
+
+Variable_green_transfer
+
+END_DESCRIPTION
+
+Parameter_flag_green_transfer
+
+END_DESCRIPTION
+
+Variable_total_bonds_stock
+UNIT: monetary units
+		
+		Total bonds stock (both traditional and green)
+END_DESCRIPTION
+
+Variable_green_bonds_stock_share
+
+END_DESCRIPTION
+
+Parameter_green_discount
+
+END_DESCRIPTION
+
+Variable_green_policy_interest_rate
+UNIT: rate
+		
+		Interest rate paid by the government on green bonds
+END_DESCRIPTION
+
+Variable_green_public_procurement_c
+
+END_DESCRIPTION
+
+Variable_green_public_procurement_cost
+UNIT: monetary units 
+		
+		Active if research subsidies to green capital firms
+END_DESCRIPTION
+
+Parameter_flag_green_public_procurement
+
+END_DESCRIPTION
+
+Parameter_flag_dividends_tax
+
+END_DESCRIPTION
+
+Variable_dividends_taxes_to_gdp
+UNIT: ratio
+
+		Participation of government's taxes on gdp
+END_DESCRIPTION
+
+Parameter_policy_share_output
+
+_INIT_
+All 1 instances equal to 0.02
+END_DESCRIPTION
+
+Parameter_flag_carbon_tax
+
+END_DESCRIPTION
+
+Parameter_flag_wealth_tax
+
+END_DESCRIPTION
+
+Variable_wealth_tax_rate
+UNIT: rate
+		
+		Endogenous wealth tax rate
+END_DESCRIPTION
+
+Variable_green_public_procurement_k
+
+END_DESCRIPTION
+
+Object_financial
+
+END_DESCRIPTION
+
+Parameter_CAR
+
+END_DESCRIPTION
+
+Parameter_deposits_exited_firms
+
+END_DESCRIPTION
+
+Parameter_interest_rate_spread
+
+END_DESCRIPTION
+
+Parameter_loans_paid_exited_firms
+
+END_DESCRIPTION
+
+Parameter_loans_unpaid_exited_firms
+
+END_DESCRIPTION
+
+Parameter_phi
+
+END_DESCRIPTION
+
+Variable_bank_debt_supply_max
+UNIT: monetary units
+				
+			Bank maximum credit supply defined as the ratio between bank net worth and
+			capital adequacy ratio (CAR)
+END_DESCRIPTION
+
+Variable_bank_deposits
+UNIT: monetary units
+
+		Total of deposits held by HH and firms at the bank -> it is the banks' liability (before entry/exit)
+END_DESCRIPTION
+
+Variable_bank_gov_bonds
+UNIT: monetary units
+
+		Stock of government bonds held by the bank
+END_DESCRIPTION
+
+Variable_bank_gov_bonds_flow
+
+END_DESCRIPTION
+
+Variable_bank_loans
+UNIT: monetary units
+
+		Total loans of agents in the period (before entry/exit)
+END_DESCRIPTION
+
+Variable_bank_net_worth
+UNIT: monetary units
+
+		Bank's net worth
+END_DESCRIPTION
+
+Variable_bank_profits
+UNIT: monetary unit
+
+		Profits by the bank
+END_DESCRIPTION
+
+Variable_bank_reserves_cb
+
+END_DESCRIPTION
+
+Variable_interest_rate_loan
+
+END_DESCRIPTION
+
+Variable_bank_gov_green_bonds
+
+END_DESCRIPTION
+
+
+DOCUOBSERVE
+
+END_DOCUOBSERVE
+
+
+DOCUINITIAL
+
+END_DOCUINITIAL
+
+
+EQ_FILE
+//#define EIGENLIB			// uncomment to use Eigen linear algebra library
+
+#include "fun_head_fast.h"
+
+/*============================= GENERAL CLASSES ==============================*/
+
+typedef pair < int, object * > firmPairT;		// firm-to-object pair template
+typedef map < int, object * > firmMapT;			// firm-to-object map template
+typedef set < object * > firmSeT;				// firm-set template
+typedef vector < double > dblVecT;				// vector of doubles template
+typedef vector < object * > objVecT;			// vector of objects template
+
+
+/*======================== COUNTRY EXTENSION CLASS ===========================*/
+
+struct countryE
+{
+	// static global pointers to speed-up the access to individual containers
+	object *c_sector, *k_sector, *hh_sector, *government, *market, *financial; 
+	
+	// country speed-up vectors & maps
+	objVecT firmCptr;							// pointers to firms in consumption sector
+	firmMapT firmCmap;							// ID to pointer map for consumption sector
+	typedef vector < double > dblVecT;				// vector of doubles template
+};
+
+#define c_sector0 V_EXT( countryE, c_sector )
+#define c_sector1 V_EXTS( PARENT, countryE, c_sector )
+#define c_sector2 V_EXTS( GRANDPARENT, countryE, c_sector )
+#define k_sector0 V_EXT( countryE, k_sector )
+#define k_sector1 V_EXTS( PARENT, countryE, k_sector )
+#define k_sector2 V_EXTS( GRANDPARENT, countryE, k_sector )
+#define hh_sector0 V_EXT( countryE, hh_sector )
+#define hh_sector1 V_EXTS( PARENT, countryE, hh_sector )
+#define hh_sector2 V_EXTS( GRANDPARENT, countryE, hh_sector )
+#define government0 V_EXT( countryE, government )
+#define government1 V_EXTS( PARENT, countryE, government )
+#define government2 V_EXTS( GRANDPARENT, countryE, government )
+#define financial0 V_EXT( countryE, financial )
+#define financial1 V_EXTS( PARENT, countryE, financial )
+#define financial2 V_EXTS( GRANDPARENT, countryE, financial )
+
+//ps: the number after the pointer refer to the level of the object calling it.
+//the 0 stands for the market, the 1 for the sector and the 2 for the firms.
+
+#include "___support_functions.cpp"
+
+#define ROUND( V, Ref, Tol ) ( abs( V - Ref ) > Tol ? V : Ref )
+
+MODELBEGIN
+
+// insert your equations here, ONLY between the MODELBEGIN and MODELEND words
+
+
+#include "___k_firms.cpp"
+#include "___k_sector.cpp"
+#include "___c_firms.cpp"
+#include "___vintage.cpp"
+#include "___initialization.cpp"
+#include "___c_sector.cpp" 
+#include "___hh_sector.cpp" 
+#include "___government.cpp" 
+#include "___market.cpp" 
+#include "___financial.cpp" 
+#include "___sfc.cpp"
+#include "___order.cpp" 
+
+
+/*========================= INITIALIZATION EQUATIONS =========================*/
+
+EQUATION( "init" )
+
+PARAMETER;										// execute only once
+
+DEFAULT_RESULT( NAN );							// default equation result
+USE_SAVED;										// allow access to saved vars
+USE_ZERO_INSTANCE;								// allow zero-instance objects
+
+
+
+CYCLES( root, cur, "market" )					// scan all country objects
+	VS( cur, "initialization" );					// initialize country
+
+RESULT( 1 )
+
+
+/*===================== SCHEDULING EQUATIONS (TIME LINE) =====================*/
+
+EQUATION( "runCountry" )
+/*
+Execute the current time-step for all existing countries
+*/
+
+V( "init" );									// ensure initialization done
+
+CYCLE( cur, "market" )
+	VS( cur, "timeStep" );
+
+RESULT( T )
+
+
+EQUATION( "timeStep" )
+/*
+Execute one time-step of one country 
+Ensure the high-level scheduling of the model equation by forcing the
+computation of key variables in the correct order
+In principle, the sequence defined here is embedded in the equations, so this
+equation is supposedly unnecessary (but may produce slightly different results)
+*/
+
+//COMPLETAR DEPOIS
+ V("order_equations");
+
+
+RESULT( T )
+
+
+MODELEND
+
+// do not add Equations in this area
+
+void close_sim( void )
+{
+	// close simulation special commands go here
+}
+
+END_EQ_FILE

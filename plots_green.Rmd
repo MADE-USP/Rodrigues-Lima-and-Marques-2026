@@ -1,0 +1,1449 @@
+---
+title: "green"
+output: 
+  pdf_document:
+    keep_tex: true
+---
+
+```{r}
+
+# ==== Manual configuration
+setwd("/Users/luccahenrique/Desktop/Rodrigues, Lima and Marques (2026)") # set working directory
+
+
+library(ggplot2)
+library(tidyverse)
+library(mFilter)
+library(ggcorrplot)
+library(writexl)
+
+library(knitr)
+library(tidyr)
+library(dplyr)
+library(purrr)
+
+
+
+
+```
+
+
+
+```{r}
+
+
+load("baseline.RData")
+
+load("scenario2.RData")
+
+load("scenario3.RData")
+
+load("scenario4.RData")
+
+load("scenario5.RData")
+
+load("scenario6.RData")
+
+load("scenario7.RData")
+
+load("scenario8.RData")
+
+load("scenario9.RData")
+
+load("scenario10.RData")
+
+load("scenario11.RData")
+
+
+df_baseline$periods <- 1:nrow(df_baseline)
+
+df_scenario2$periods <- 1:nrow(df_scenario2)
+
+df_scenario3$periods <- 1:nrow(df_scenario3)
+
+df_scenario4$periods <- 1:nrow(df_scenario4)
+
+df_scenario5$periods <- 1:nrow(df_scenario5)
+
+df_scenario6$periods <- 1:nrow(df_scenario6)
+
+df_scenario7$periods <- 1:nrow(df_scenario7)
+
+df_scenario8$periods <- 1:nrow(df_scenario8)
+
+df_scenario9$periods <- 1:nrow(df_scenario9)
+
+df_scenario10$periods <- 1:nrow(df_scenario10)
+
+df_scenario11$periods <- 1:nrow(df_scenario11)
+
+
+
+# List of scenario data frames
+scenarios_carbontax <- list(df_baseline, df_scenario2, df_scenario3, df_scenario4, df_scenario5, df_scenario6)
+
+scenarios_wealthtax <- list(df_baseline, df_scenario7, df_scenario8, df_scenario9, df_scenario10, df_scenario11)
+
+
+```
+
+
+
+```{r, trend}
+
+ggplot(df_baseline) +
+  geom_line(aes(x = periods, y = gdp_real_Med, color = "Output")) +
+  geom_ribbon(aes(x = periods, ymin = gdp_real_Med - gdp_real_Mad, ymax = gdp_real_Med + gdp_real_Mad, fill = "Output"), alpha = 0.3, show.legend = FALSE) +
+  geom_line(aes(x = periods, y = investment_realized_c_Med, color = "Investment"), linetype = "dashed") +
+  geom_ribbon(aes(x = periods, ymin = investment_realized_c_Med - investment_realized_c_Mad, ymax = investment_realized_c_Med + investment_realized_c_Mad, fill = "Investment"), alpha = 0.3, show.legend = FALSE) +
+  geom_line(aes(x = periods, y = production_c_real_Med, color = "Consumption"), alpha = 1.1,linetype = "dotted") +
+  geom_ribbon(aes(x = periods, ymin = production_c_real_Med - production_c_real_Mad, ymax = production_c_real_Med + production_c_real_Mad, fill = "Consumption"), alpha = 0.3, show.legend = FALSE) +
+  scale_y_continuous(trans='log10') +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y= "Logs", color = "") +
+  theme(panel.border = element_rect(color = "black", linewidth = 0.5, fill = NA),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = c(0.15,0.9),
+        legend.background = element_blank()) +
+  scale_color_manual(values = c(   "#f7581d", "#8b8683" ,"#3366ff"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "solid"))))+
+  scale_fill_manual(values = c(  "#f7581d", "#8b8683" ,"#3366ff"))
+
+```
+
+
+
+```{r, cycle}
+
+lowP      <- 6      # bandpass filter minimum period
+highP     <- 32     # bandpass filter maximum period
+bpfK      <- 12     # bandpass filter order
+
+series_list <- list(
+  gdp_real_Med = "GDP",
+  production_c_real_Med = "Consumption",
+  investment_realized_c_Med = "Investment",
+  unemployment_rate_Med = "Unemployment",
+  cpi_Med = "CPI",
+  gini_hh_Med = "Gini",
+  wage_share_Med = "Wage share",
+  emissions_Med = "Emissions"
+)
+
+# Function to apply bkfilter and extract the cycle
+extract_cycle <- function(series_name, new_name) {
+  cycle <- bkfilter(log(df_baseline[[series_name]]), pl = lowP, pu = highP, nfix = bpfK)$cycle
+  setNames(data.frame(cycle), new_name)
+}
+
+
+# Apply to all series and combine columns
+cycles_combined <- map2_dfc(names(series_list), series_list, extract_cycle)
+cycles_combined$periods <- 1:nrow(df_scenario11)
+
+
+ggplot(data = cycles_combined) +
+  geom_line(aes(x = periods, y = GDP, color = "Output"),linewidth = 0.3, na.rm = TRUE) +
+  geom_line(aes(x = periods, y = Investment, color= "Investment"),linetype = "dashed", linewidth = 0.4, na.rm = TRUE) +
+  geom_line(aes(x = periods, y = Consumption, color = "Consumption"), linewidth = 0.8, alpha =1.2,linetype = "dotted", na.rm = TRUE) +
+  theme(legend.position = "bottom") + 
+  labs(x = "Time", y= "Filtered Series", color = "") +
+  theme(panel.border = element_rect(color = "black", linewidth = 0.5, fill = NA),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = c(0.15,0.9),
+        legend.background = element_blank()) +
+  scale_color_manual(values = c(  "#f7581d", "#8b8683" ,"#3366ff"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "solid"))))
+
+```
+
+
+```{r, corr_matrix}
+
+cor_matrix <- cor(cycles_combined[ , !names(cycles_combined) %in% "periods"], 
+                  use = "pairwise.complete.obs", 
+                  method = "pearson")
+
+
+ggcorrplot(cor_matrix,
+           type = "lower",         # or "full" to show both triangles
+           lab = TRUE,             # show correlation values
+           lab_size = 3,
+           show.diag = TRUE,       # <- ensures diagonal is shown
+           colors = c("blue", "white", "red"),
+           title = "Pearson Correlation Matrix")
+
+ggsave("corr_matrix-1.pdf")
+```
+
+
+
+```{r, results = 'asis'}
+
+# table_summary <- df_baseline %>%
+#   summarise(
+#     gdp_mean = mean(gdp_growth_Med, na.rm = TRUE),
+#     gdp_stdv = sd(gdp_growth_Med, na.rm = TRUE),
+#     investment_mean = mean(investment_growth_Med, na.rm = TRUE),
+#     investment_stdv = sd(investment_growth_Med, na.rm = TRUE),
+#     consumption_mean = mean(consumption_growth_Med, na.rm = TRUE),
+#     consumption_stdv = sd(consumption_growth_Med, na.rm = TRUE),
+#     unemployment_mean = mean(unemployment_rate_Med, na.rm = TRUE),
+#     unemployment_stdv = sd(unemployment_rate_Med, na.rm = TRUE),
+#   )
+
+
+# List of variables to compute CCF with GDP
+var_gdp_ccf <- c("Consumption", "Investment", "Unemployment", "Emissions")
+
+# Function to compute CCF with GDP
+get_ccf <- function(var_name) {
+  ccf_res <- ccf(cycles_combined$GDP, cycles_combined[[var_name]], lag.max = 3, na.action = na.pass, plot = FALSE)
+  data.frame(
+    Variable = var_name,
+    Lag = ccf_res$lag,
+    CCF = ccf_res$acf
+  )
+}
+
+# Combine results for all variables
+ccf_table <- map_df(var_gdp_ccf, get_ccf)
+
+# Pivot to wide format for LaTeX table
+ccf_latex_table <- ccf_table %>%
+  pivot_wider(names_from = Lag, values_from = CCF, names_prefix = "t")
+
+# Optional: Round for presentation
+ccf_latex_table <- ccf_latex_table %>%
+  mutate(across(starts_with("t"), ~round(., 3)))
+
+ccf_latex_table
+
+```
+
+
+```{r}
+
+
+# List of variables to compute CCF with GDP
+var_gini_ccf <- c("GDP", "Investment", "Unemployment", "Wage share")
+
+# Function to compute CCF with GDP
+get_ccf <- function(var_name) {
+  ccf_res <- ccf(cycles_combined$Gini, cycles_combined[[var_name]], lag.max = 3, na.action = na.pass, plot = FALSE)
+  data.frame(
+    Variable = var_name,
+    Lag = ccf_res$lag,
+    CCF = ccf_res$acf
+  )
+}
+
+# Combine results for all variables
+ccf_table <- map_df(var_gini_ccf, get_ccf)
+
+# Pivot to wide format for LaTeX table
+ccf_latex_table <- ccf_table %>%
+  pivot_wider(names_from = Lag, values_from = CCF, names_prefix = "t")
+
+# Optional: Round for presentation
+ccf_latex_table <- ccf_latex_table %>%
+  mutate(across(starts_with("t"), ~round(., 3)))
+
+ccf_latex_table
+
+```
+
+```{r, inequalit_trend}
+
+ggplot() +
+  geom_line(data = df_baseline, aes(x = periods, y = gini_hh_Med, color = "Baseline"), alpha = 1) +
+  geom_ribbon(data = df_baseline, aes(x = periods, ymin = gini_hh_Med - 1.96 * gini_hh_Mad / sqrt(50), 
+                                      ymax = gini_hh_Med + 1.96 * gini_hh_Mad / sqrt(50), fill = "Baseline"), 
+              alpha = 0.3, show.legend = FALSE) +
+  scale_color_manual(values = c("Baseline" = "#FF7276")) +
+  scale_fill_manual(values = c("Baseline" = "#FF7276")) +
+  labs(x = "Time", y = "Gini index", color = "", fill = "") +
+  theme(
+    legend.position = "none",
+    panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+    panel.background = element_rect(fill = "white")
+  )+
+  scale_y_continuous(limits = c(0, 1))
+
+
+
+ggplot() +
+  geom_line(data = df_baseline, aes(x = periods, y = wage_share_Med, color = "Baseline"), alpha = 1) +
+  geom_ribbon(data = df_baseline, aes(x = periods, ymin = wage_share_Med - 1.96 * wage_share_Mad / sqrt(50), 
+                                      ymax = wage_share_Med + 1.96 * wage_share_Mad / sqrt(50), fill = "Baseline"), 
+              alpha = 0.3, show.legend = FALSE) +
+  scale_color_manual(values = c("Baseline" = "#3366ff")) +
+  scale_fill_manual(values = c("Baseline" = "#3366ff")) +
+  labs(x = "Time", y = "Gini index", color = "", fill = "") +
+  theme(
+    legend.position = "none",
+    panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+    panel.background = element_rect(fill = "white")
+  ) +
+  scale_y_continuous(limits = c(0, 1))
+
+```
+
+```{r, shock_emissions_coef}
+
+
+# Apply the calculations to each scenario
+scenarios_carbontax <- lapply(scenarios_carbontax, function(df) {
+  df$ratio_emissions_coefficient <- df$emissions_coefficient_Med / df_baseline$emissions_coefficient_Med
+  
+  df$corr_scenario <- cor(df$emissions_coefficient_Med, df_baseline$emissions_coefficient_Med)
+  
+  df$ratio_emissions_coefficient_sd <- abs(df$ratio_emissions_coefficient) * sqrt(
+    (df$emissions_coefficient_Mad / df$emissions_coefficient_Med)^2 +
+    (df_baseline$emissions_coefficient_Mad / df_baseline$emissions_coefficient_Med)^2 - 
+    2 * df$corr_scenario * (df$emissions_coefficient_Mad / df$emissions_coefficient_Med) * (df_baseline$emissions_coefficient_Mad / df_baseline$emissions_coefficient_Med)
+  )
+  
+  df$ratio_emissions_coefficient_ci <- 1.96 * (df$ratio_emissions_coefficient_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_carbontax[[1]]
+df_scenario2 <- scenarios_carbontax[[2]]
+df_scenario3 <- scenarios_carbontax[[3]]
+df_scenario4 <- scenarios_carbontax[[4]]
+df_scenario5 <- scenarios_carbontax[[5]]
+df_scenario6 <- scenarios_carbontax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario2, aes(x = periods, y = ratio_emissions_coefficient, color = "Carbon Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario3, aes(x = periods, y = ratio_emissions_coefficient, color = "Carbon Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario4, aes(x = periods, y = ratio_emissions_coefficient, color = "Carbon Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario5, aes(x = periods, y = ratio_emissions_coefficient, color = "Carbon Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario6, aes(x = periods, y = ratio_emissions_coefficient, color = "Carbon Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario2, periods >=50), aes(x = periods, ymin = ratio_emissions_coefficient - ratio_emissions_coefficient_ci, ymax = ratio_emissions_coefficient + ratio_emissions_coefficient_ci, fill = "Carbon Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario3, periods >=50), aes(x = periods, ymin = ratio_emissions_coefficient - ratio_emissions_coefficient_ci, ymax = ratio_emissions_coefficient + ratio_emissions_coefficient_ci, fill = "Carbon Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario4, periods >=50), aes(x = periods, ymin = ratio_emissions_coefficient - ratio_emissions_coefficient_ci, ymax = ratio_emissions_coefficient + ratio_emissions_coefficient_ci, fill = "Carbon Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario5, periods >=50), aes(x = periods, ymin = ratio_emissions_coefficient - ratio_emissions_coefficient_ci, ymax = ratio_emissions_coefficient + ratio_emissions_coefficient_ci, fill = "Carbon Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario6, periods >=50), aes(x = periods, ymin = ratio_emissions_coefficient - ratio_emissions_coefficient_ci, ymax = ratio_emissions_coefficient + ratio_emissions_coefficient_ci, fill = "Carbon Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "Carbon intensity", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+         legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+
+
+```
+
+
+
+```{r, shock_gini}
+
+# Apply the calculations to each scenario
+scenarios_carbontax <- lapply(scenarios_carbontax, function(df) {
+  df$ratio_gini_hh <- df$gini_hh_Med / df_baseline$gini_hh_Med
+  
+  df$corr_scenario <- cor(df$gini_hh_Med, df_baseline$gini_hh_Med)
+  
+  df$ratio_gini_hh_sd <- abs(df$ratio_gini_hh) * sqrt(
+    (df$gini_hh_Mad / df$gini_hh_Med)^2 +
+    (df_baseline$gini_hh_Mad / df_baseline$gini_hh_Med)^2 - 
+    2 * df$corr_scenario * (df$gini_hh_Mad / df$gini_hh_Med) * (df_baseline$gini_hh_Mad / df_baseline$gini_hh_Med)
+  )
+  
+  df$ratio_gini_hh_ci <- 1.96 * (df$ratio_gini_hh_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_carbontax[[1]]
+df_scenario2 <- scenarios_carbontax[[2]]
+df_scenario3 <- scenarios_carbontax[[3]]
+df_scenario4 <- scenarios_carbontax[[4]]
+df_scenario5 <- scenarios_carbontax[[5]]
+df_scenario6 <- scenarios_carbontax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario2, aes(x = periods, y = ratio_gini_hh, color = "Carbon Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario3, aes(x = periods, y = ratio_gini_hh, color = "Carbon Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario4, aes(x = periods, y = ratio_gini_hh, color = "Carbon Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario5, aes(x = periods, y = ratio_gini_hh, color = "Carbon Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario6, aes(x = periods, y = ratio_gini_hh, color = "Carbon Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario2, periods >=50), aes(x = periods, ymin = ratio_gini_hh - ratio_gini_hh_ci, ymax = ratio_gini_hh + ratio_gini_hh_ci, fill = "Carbon Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario3, periods >=50), aes(x = periods, ymin = ratio_gini_hh - ratio_gini_hh_ci, ymax = ratio_gini_hh + ratio_gini_hh_ci, fill = "Carbon Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario4, periods >=50), aes(x = periods, ymin = ratio_gini_hh - ratio_gini_hh_ci, ymax = ratio_gini_hh + ratio_gini_hh_ci, fill = "Carbon Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario5, periods >=50), aes(x = periods, ymin = ratio_gini_hh - ratio_gini_hh_ci, ymax = ratio_gini_hh + ratio_gini_hh_ci, fill = "Carbon Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario6, periods >=50), aes(x = periods, ymin = ratio_gini_hh - ratio_gini_hh_ci, ymax = ratio_gini_hh + ratio_gini_hh_ci, fill = "Carbon Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  labs(x = "Time", y = "Gini index", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+         legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+
+```
+
+
+
+```{r, shock_wage_share}
+
+
+# Apply the calculations to each scenario
+scenarios_carbontax <- lapply(scenarios_carbontax, function(df) {
+  df$ratio_wage_share <- df$wage_share_Med / df_baseline$wage_share_Med
+  
+  df$corr_scenario <- cor(df$wage_share_Med, df_baseline$wage_share_Med)
+  
+  df$ratio_wage_share_sd <- abs(df$ratio_wage_share) * sqrt(
+    (df$wage_share_Mad / df$wage_share_Med)^2 +
+    (df_baseline$wage_share_Mad / df_baseline$wage_share_Med)^2 - 
+    2 * df$corr_scenario * (df$wage_share_Mad / df$wage_share_Med) * (df_baseline$wage_share_Mad / df_baseline$wage_share_Med)
+  )
+  
+  df$ratio_wage_share_ci <- 1.96 * (df$ratio_wage_share_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_carbontax[[1]]
+df_scenario2 <- scenarios_carbontax[[2]]
+df_scenario3 <- scenarios_carbontax[[3]]
+df_scenario4 <- scenarios_carbontax[[4]]
+df_scenario5 <- scenarios_carbontax[[5]]
+df_scenario6 <- scenarios_carbontax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario2, aes(x = periods, y = ratio_wage_share, color = "Carbon Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario3, aes(x = periods, y = ratio_wage_share, color = "Carbon Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario4, aes(x = periods, y = ratio_wage_share, color = "Carbon Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario5, aes(x = periods, y = ratio_wage_share, color = "Carbon Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario6, aes(x = periods, y = ratio_wage_share, color = "Carbon Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario2, periods >=50), aes(x = periods, ymin = ratio_wage_share - ratio_wage_share_ci, ymax = ratio_wage_share + ratio_wage_share_ci, fill = "Carbon Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario3, periods >=50), aes(x = periods, ymin = ratio_wage_share - ratio_wage_share_ci, ymax = ratio_wage_share + ratio_wage_share_ci, fill = "Carbon Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario4, periods >=50), aes(x = periods, ymin = ratio_wage_share - ratio_wage_share_ci, ymax = ratio_wage_share + ratio_wage_share_ci, fill = "Carbon Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario5, periods >=50), aes(x = periods, ymin = ratio_wage_share - ratio_wage_share_ci, ymax = ratio_wage_share + ratio_wage_share_ci, fill = "Carbon Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario6, periods >=50), aes(x = periods, ymin = ratio_wage_share - ratio_wage_share_ci, ymax = ratio_wage_share + ratio_wage_share_ci, fill = "Carbon Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "Wage share", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+         legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+```
+
+```{r, shock_gdp}
+
+# Apply the calculations to each scenario
+scenarios_carbontax <- lapply(scenarios_carbontax, function(df) {
+  df$ratio_gdp_real <- df$gdp_real_Med / df_baseline$gdp_real_Med
+  
+  df$corr_scenario <- cor(df$gdp_real_Med, df_baseline$gdp_real_Med)
+  
+  df$ratio_gdp_real_sd <- abs(df$ratio_gdp_real) * sqrt(
+    (df$gdp_real_Mad / df$gdp_real_Med)^2 +
+    (df_baseline$gdp_real_Mad / df_baseline$gdp_real_Med)^2 - 
+    2 * df$corr_scenario * (df$gdp_real_Mad / df$gdp_real_Med) * (df_baseline$gdp_real_Mad / df_baseline$gdp_real_Med)
+  )
+  
+  df$ratio_gdp_real_ci <- 1.96 * (df$ratio_gdp_real_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_carbontax[[1]]
+df_scenario2 <- scenarios_carbontax[[2]]
+df_scenario3 <- scenarios_carbontax[[3]]
+df_scenario4 <- scenarios_carbontax[[4]]
+df_scenario5 <- scenarios_carbontax[[5]]
+df_scenario6 <- scenarios_carbontax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario2, aes(x = periods, y = ratio_gdp_real, color = "Carbon Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario3, aes(x = periods, y = ratio_gdp_real, color = "Carbon Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario4, aes(x = periods, y = ratio_gdp_real, color = "Carbon Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario5, aes(x = periods, y = ratio_gdp_real, color = "Carbon Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario6, aes(x = periods, y = ratio_gdp_real, color = "Carbon Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario2, periods >=50), aes(x = periods, ymin = ratio_gdp_real - ratio_gdp_real_ci, ymax = ratio_gdp_real + ratio_gdp_real_ci, fill = "Carbon Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario3, periods >=50), aes(x = periods, ymin = ratio_gdp_real - ratio_gdp_real_ci, ymax = ratio_gdp_real + ratio_gdp_real_ci, fill = "Carbon Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario4, periods >=50), aes(x = periods, ymin = ratio_gdp_real - ratio_gdp_real_ci, ymax = ratio_gdp_real + ratio_gdp_real_ci, fill = "Carbon Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario5, periods >=50), aes(x = periods, ymin = ratio_gdp_real - ratio_gdp_real_ci, ymax = ratio_gdp_real + ratio_gdp_real_ci, fill = "Carbon Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario6, periods >=50), aes(x = periods, ymin = ratio_gdp_real - ratio_gdp_real_ci, ymax = ratio_gdp_real + ratio_gdp_real_ci, fill = "Carbon Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "GDP", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+
+
+
+
+```
+
+
+```{r, shock_emissions}
+
+
+# Apply the calculations to each scenario
+scenarios_carbontax <- lapply(scenarios_carbontax, function(df) {
+  df$ratio_emissions <- df$emissions_Med / df_baseline$emissions_Med
+  
+  df$corr_scenario <- cor(df$emissions_Med, df_baseline$emissions_Med)
+  
+  df$ratio_emissions_sd <- abs(df$ratio_emissions) * sqrt(
+    (df$emissions_Mad / df$emissions_Med)^2 +
+    (df_baseline$emissions_Mad / df_baseline$emissions_Med)^2 - 
+    2 * df$corr_scenario * (df$emissions_Mad / df$emissions_Med) * (df_baseline$emissions_Mad / df_baseline$emissions_Med)
+  )
+  
+  df$ratio_emissions_ci <- 1.96 * (df$ratio_emissions_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_carbontax[[1]]
+df_scenario2 <- scenarios_carbontax[[2]]
+df_scenario3 <- scenarios_carbontax[[3]]
+df_scenario4 <- scenarios_carbontax[[4]]
+df_scenario5 <- scenarios_carbontax[[5]]
+df_scenario6 <- scenarios_carbontax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario2, aes(x = periods, y = ratio_emissions, color = "Carbon Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario3, aes(x = periods, y = ratio_emissions, color = "Carbon Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario4, aes(x = periods, y = ratio_emissions, color = "Carbon Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario5, aes(x = periods, y = ratio_emissions, color = "Carbon Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario6, aes(x = periods, y = ratio_emissions, color = "Carbon Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario2, periods >=50), aes(x = periods, ymin = ratio_emissions - ratio_emissions_ci, ymax = ratio_emissions + ratio_emissions_ci, fill = "Carbon Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario3, periods >=50), aes(x = periods, ymin = ratio_emissions - ratio_emissions_ci, ymax = ratio_emissions + ratio_emissions_ci, fill = "Carbon Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario4, periods >=50), aes(x = periods, ymin = ratio_emissions - ratio_emissions_ci, ymax = ratio_emissions + ratio_emissions_ci, fill = "Carbon Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario5, periods >=50), aes(x = periods, ymin = ratio_emissions - ratio_emissions_ci, ymax = ratio_emissions + ratio_emissions_ci, fill = "Carbon Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario6, periods >=50), aes(x = periods, ymin = ratio_emissions - ratio_emissions_ci, ymax = ratio_emissions + ratio_emissions_ci, fill = "Carbon Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "Aggregate Emissions", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+
+
+```
+
+
+```{r, shock_unemployment_rate}
+
+
+# Apply the calculations to each scenario
+scenarios_carbontax <- lapply(scenarios_carbontax, function(df) {
+  df$ratio_unemployment_rate <- df$unemployment_rate_Med / df_baseline$unemployment_rate_Med
+  
+  df$corr_scenario <- cor(df$unemployment_rate_Med, df_baseline$unemployment_rate_Med)
+  
+  df$ratio_unemployment_rate_sd <- abs(df$ratio_unemployment_rate) * sqrt(
+    (df$unemployment_rate_Mad / df$unemployment_rate_Med)^2 +
+    (df_baseline$unemployment_rate_Mad / df_baseline$unemployment_rate_Med)^2 - 
+    2 * df$corr_scenario * (df$unemployment_rate_Mad / df$unemployment_rate_Med) * (df_baseline$unemployment_rate_Mad / df_baseline$unemployment_rate_Med)
+  )
+  
+  df$ratio_unemployment_rate_ci <- 1.96 * (df$ratio_unemployment_rate_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_carbontax[[1]]
+df_scenario2 <- scenarios_carbontax[[2]]
+df_scenario3 <- scenarios_carbontax[[3]]
+df_scenario4 <- scenarios_carbontax[[4]]
+df_scenario5 <- scenarios_carbontax[[5]]
+df_scenario6 <- scenarios_carbontax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario2, aes(x = periods, y = ratio_unemployment_rate, color = "Carbon Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario3, aes(x = periods, y = ratio_unemployment_rate, color = "Carbon Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario4, aes(x = periods, y = ratio_unemployment_rate, color = "Carbon Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario5, aes(x = periods, y = ratio_unemployment_rate, color = "Carbon Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario6, aes(x = periods, y = ratio_unemployment_rate, color = "Carbon Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario2, periods >=50), aes(x = periods, ymin = ratio_unemployment_rate - ratio_unemployment_rate_ci, ymax = ratio_unemployment_rate + ratio_unemployment_rate_ci, fill = "Carbon Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario3, periods >=50), aes(x = periods, ymin = ratio_unemployment_rate - ratio_unemployment_rate_ci, ymax = ratio_unemployment_rate + ratio_unemployment_rate_ci, fill = "Carbon Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario4, periods >=50), aes(x = periods, ymin = ratio_unemployment_rate - ratio_unemployment_rate_ci, ymax = ratio_unemployment_rate + ratio_unemployment_rate_ci, fill = "Carbon Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario5, periods >=50), aes(x = periods, ymin = ratio_unemployment_rate - ratio_unemployment_rate_ci, ymax = ratio_unemployment_rate + ratio_unemployment_rate_ci, fill = "Carbon Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario6, periods >=50), aes(x = periods, ymin = ratio_unemployment_rate - ratio_unemployment_rate_ci, ymax = ratio_unemployment_rate + ratio_unemployment_rate_ci, fill = "Carbon Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "Unemployment rate", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+         legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+
+```
+
+
+
+```{r, shock_cpi}
+
+df_baseline$inflation_Med
+# Apply the calculations to each scenario
+scenarios_carbontax <- lapply(scenarios_carbontax, function(df) {
+  df$ratio_cpi <- df$cpi_Med / df_baseline$cpi_Med
+  
+  df$corr_scenario <- cor(df$cpi_Med, df_baseline$cpi_Med)
+  
+  df$ratio_cpi_sd <- abs(df$ratio_cpi) * sqrt(
+    (df$cpi_Mad / df$cpi_Med)^2 +
+    (df_baseline$cpi_Mad / df_baseline$cpi_Med)^2 - 
+    2 * df$corr_scenario * (df$cpi_Mad / df$cpi_Med) * (df_baseline$cpi_Mad / df_baseline$cpi_Med)
+  )
+  
+  df$ratio_cpi_ci <- 1.96 * (df$ratio_cpi_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_carbontax[[1]]
+df_scenario2 <- scenarios_carbontax[[2]]
+df_scenario3 <- scenarios_carbontax[[3]]
+df_scenario4 <- scenarios_carbontax[[4]]
+df_scenario5 <- scenarios_carbontax[[5]]
+df_scenario6 <- scenarios_carbontax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario2, aes(x = periods, y = ratio_cpi, color = "Carbon Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario3, aes(x = periods, y = ratio_cpi, color = "Carbon Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario4, aes(x = periods, y = ratio_cpi, color = "Carbon Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario5, aes(x = periods, y = ratio_cpi, color = "Carbon Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario6, aes(x = periods, y = ratio_cpi, color = "Carbon Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario2, periods >=50), aes(x = periods, ymin = ratio_cpi - ratio_cpi_ci, ymax = ratio_cpi + ratio_cpi_ci, fill = "Carbon Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario3, periods >=50), aes(x = periods, ymin = ratio_cpi - ratio_cpi_ci, ymax = ratio_cpi + ratio_cpi_ci, fill = "Carbon Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario4, periods >=50), aes(x = periods, ymin = ratio_cpi - ratio_cpi_ci, ymax = ratio_cpi + ratio_cpi_ci, fill = "Carbon Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario5, periods >=50), aes(x = periods, ymin = ratio_cpi - ratio_cpi_ci, ymax = ratio_cpi + ratio_cpi_ci, fill = "Carbon Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario6, periods >=50), aes(x = periods, ymin = ratio_cpi - ratio_cpi_ci, ymax = ratio_cpi + ratio_cpi_ci, fill = "Carbon Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "CPI", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+```
+
+
+
+```{r, shock2_emissions_coef}
+
+
+# Apply the calculations to each scenario
+scenarios_wealthtax <- lapply(scenarios_wealthtax, function(df) {
+  df$ratio_emissions_coefficient <- df$emissions_coefficient_Med / df_baseline$emissions_coefficient_Med
+  
+  df$corr_scenario <- cor(df$emissions_coefficient_Med, df_baseline$emissions_coefficient_Med)
+  
+  df$ratio_emissions_coefficient_sd <- abs(df$ratio_emissions_coefficient) * sqrt(
+    (df$emissions_coefficient_Mad / df$emissions_coefficient_Med)^2 +
+    (df_baseline$emissions_coefficient_Mad / df_baseline$emissions_coefficient_Med)^2 - 
+    2 * df$corr_scenario * (df$emissions_coefficient_Mad / df$emissions_coefficient_Med) * (df_baseline$emissions_coefficient_Mad / df_baseline$emissions_coefficient_Med)
+  )
+  
+  df$ratio_emissions_coefficient_ci <- 1.96 * (df$ratio_emissions_coefficient_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_wealthtax[[1]]
+df_scenario7 <- scenarios_wealthtax[[2]]
+df_scenario8 <- scenarios_wealthtax[[3]]
+df_scenario9 <- scenarios_wealthtax[[4]]
+df_scenario10 <- scenarios_wealthtax[[5]]
+df_scenario11 <- scenarios_wealthtax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario7, aes(x = periods, y = ratio_emissions_coefficient, color = "Wealth Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario8, aes(x = periods, y = ratio_emissions_coefficient, color = "Wealth Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario9, aes(x = periods, y = ratio_emissions_coefficient, color = "Wealth Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario10, aes(x = periods, y = ratio_emissions_coefficient, color = "Wealth Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario11, aes(x = periods, y = ratio_emissions_coefficient, color = "Wealth Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario7, periods >=50), aes(x = periods, ymin = ratio_emissions_coefficient - ratio_emissions_coefficient_ci, ymax = ratio_emissions_coefficient + ratio_emissions_coefficient_ci, fill = "Wealth Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario8, periods >=50), aes(x = periods, ymin = ratio_emissions_coefficient - ratio_emissions_coefficient_ci, ymax = ratio_emissions_coefficient + ratio_emissions_coefficient_ci, fill = "Wealth Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario9, periods >=50), aes(x = periods, ymin = ratio_emissions_coefficient - ratio_emissions_coefficient_ci, ymax = ratio_emissions_coefficient + ratio_emissions_coefficient_ci, fill = "Wealth Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario10, periods >=50), aes(x = periods, ymin = ratio_emissions_coefficient - ratio_emissions_coefficient_ci, ymax = ratio_emissions_coefficient + ratio_emissions_coefficient_ci, fill = "Wealth Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario11, periods >=50), aes(x = periods, ymin = ratio_emissions_coefficient - ratio_emissions_coefficient_ci, ymax = ratio_emissions_coefficient + ratio_emissions_coefficient_ci, fill = "Wealth Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "Carbon intensity", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+         legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+
+
+
+```
+
+
+
+```{r, shock2_gini}
+
+# Apply the calculations to each scenario
+scenarios_wealthtax <- lapply(scenarios_wealthtax, function(df) {
+  df$ratio_gini_hh <- df$gini_hh_Med / df_baseline$gini_hh_Med
+  
+  df$corr_scenario <- cor(df$gini_hh_Med, df_baseline$gini_hh_Med)
+  
+  df$ratio_gini_hh_sd <- abs(df$ratio_gini_hh) * sqrt(
+    (df$gini_hh_Mad / df$gini_hh_Med)^2 +
+    (df_baseline$gini_hh_Mad / df_baseline$gini_hh_Med)^2 - 
+    2 * df$corr_scenario * (df$gini_hh_Mad / df$gini_hh_Med) * (df_baseline$gini_hh_Mad / df_baseline$gini_hh_Med)
+  )
+  
+  df$ratio_gini_hh_ci <- 1.96 * (df$ratio_gini_hh_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_wealthtax[[1]]
+df_scenario7 <- scenarios_wealthtax[[2]]
+df_scenario8 <- scenarios_wealthtax[[3]]
+df_scenario9 <- scenarios_wealthtax[[4]]
+df_scenario10 <- scenarios_wealthtax[[5]]
+df_scenario11 <- scenarios_wealthtax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario7, aes(x = periods, y = ratio_gini_hh, color = "Wealth Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario8, aes(x = periods, y = ratio_gini_hh, color = "Wealth Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario9, aes(x = periods, y = ratio_gini_hh, color = "Wealth Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario10, aes(x = periods, y = ratio_gini_hh, color = "Wealth Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario11, aes(x = periods, y = ratio_gini_hh, color = "Wealth Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario7, periods >=50), aes(x = periods, ymin = ratio_gini_hh - ratio_gini_hh_ci, ymax = ratio_gini_hh + ratio_gini_hh_ci, fill = "Wealth Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario8, periods >=50), aes(x = periods, ymin = ratio_gini_hh - ratio_gini_hh_ci, ymax = ratio_gini_hh + ratio_gini_hh_ci, fill = "Wealth Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario9, periods >=50), aes(x = periods, ymin = ratio_gini_hh - ratio_gini_hh_ci, ymax = ratio_gini_hh + ratio_gini_hh_ci, fill = "Wealth Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario10, periods >=50), aes(x = periods, ymin = ratio_gini_hh - ratio_gini_hh_ci, ymax = ratio_gini_hh + ratio_gini_hh_ci, fill = "Wealth Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario11, periods >=50), aes(x = periods, ymin = ratio_gini_hh - ratio_gini_hh_ci, ymax = ratio_gini_hh + ratio_gini_hh_ci, fill = "Wealth Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "Gini index", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+         legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+```
+
+
+
+```{r, shock2_wage_share}
+
+
+# Apply the calculations to each scenario
+scenarios_wealthtax <- lapply(scenarios_wealthtax, function(df) {
+  df$ratio_wage_share <- df$wage_share_Med / df_baseline$wage_share_Med
+  
+  df$corr_scenario <- cor(df$wage_share_Med, df_baseline$wage_share_Med)
+  
+  df$ratio_wage_share_sd <- abs(df$ratio_wage_share) * sqrt(
+    (df$wage_share_Mad / df$wage_share_Med)^2 +
+    (df_baseline$wage_share_Mad / df_baseline$wage_share_Med)^2 - 
+    2 * df$corr_scenario * (df$wage_share_Mad / df$wage_share_Med) * (df_baseline$wage_share_Mad / df_baseline$wage_share_Med)
+  )
+  
+  df$ratio_wage_share_ci <- 1.96 * (df$ratio_wage_share_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_wealthtax[[1]]
+df_scenario7 <- scenarios_wealthtax[[2]]
+df_scenario8 <- scenarios_wealthtax[[3]]
+df_scenario9 <- scenarios_wealthtax[[4]]
+df_scenario10 <- scenarios_wealthtax[[5]]
+df_scenario11 <- scenarios_wealthtax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario7, aes(x = periods, y = ratio_wage_share, color = "Wealth Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario8, aes(x = periods, y = ratio_wage_share, color = "Wealth Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario9, aes(x = periods, y = ratio_wage_share, color = "Wealth Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario10, aes(x = periods, y = ratio_wage_share, color = "Wealth Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario11, aes(x = periods, y = ratio_wage_share, color = "Wealth Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario7, periods >=50), aes(x = periods, ymin = ratio_wage_share - ratio_wage_share_ci, ymax = ratio_wage_share + ratio_wage_share_ci, fill = "Wealth Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario8, periods >=50), aes(x = periods, ymin = ratio_wage_share - ratio_wage_share_ci, ymax = ratio_wage_share + ratio_wage_share_ci, fill = "Wealth Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario9, periods >=50), aes(x = periods, ymin = ratio_wage_share - ratio_wage_share_ci, ymax = ratio_wage_share + ratio_wage_share_ci, fill = "Wealth Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario10, periods >=50), aes(x = periods, ymin = ratio_wage_share - ratio_wage_share_ci, ymax = ratio_wage_share + ratio_wage_share_ci, fill = "Wealth Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario11, periods >=50), aes(x = periods, ymin = ratio_wage_share - ratio_wage_share_ci, ymax = ratio_wage_share + ratio_wage_share_ci, fill = "Wealth Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "Wage share", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+         legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+
+```
+
+```{r, shock2_gdp}
+
+# Apply the calculations to each scenario
+scenarios_wealthtax <- lapply(scenarios_wealthtax, function(df) {
+  df$ratio_gdp_real <- df$gdp_real_Med / df_baseline$gdp_real_Med
+  
+  df$corr_scenario <- cor(df$gdp_real_Med, df_baseline$gdp_real_Med)
+  
+  df$ratio_gdp_real_sd <- abs(df$ratio_gdp_real) * sqrt(
+    (df$gdp_real_Mad / df$gdp_real_Med)^2 +
+    (df_baseline$gdp_real_Mad / df_baseline$gdp_real_Med)^2 - 
+    2 * df$corr_scenario * (df$gdp_real_Mad / df$gdp_real_Med) * (df_baseline$gdp_real_Mad / df_baseline$gdp_real_Med)
+  )
+  
+  df$ratio_gdp_real_ci <- 1.96 * (df$ratio_gdp_real_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_wealthtax[[1]]
+df_scenario7 <- scenarios_wealthtax[[2]]
+df_scenario8 <- scenarios_wealthtax[[3]]
+df_scenario9 <- scenarios_wealthtax[[4]]
+df_scenario10 <- scenarios_wealthtax[[5]]
+df_scenario11 <- scenarios_wealthtax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario7, aes(x = periods, y = ratio_gdp_real, color = "Wealth Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario8, aes(x = periods, y = ratio_gdp_real, color = "Wealth Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario9, aes(x = periods, y = ratio_gdp_real, color = "Wealth Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario10, aes(x = periods, y = ratio_gdp_real, color = "Wealth Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario11, aes(x = periods, y = ratio_gdp_real, color = "Wealth Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario7, periods >=50), aes(x = periods, ymin = ratio_gdp_real - ratio_gdp_real_ci, ymax = ratio_gdp_real + ratio_gdp_real_ci, fill = "Wealth Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario8, periods >=50), aes(x = periods, ymin = ratio_gdp_real - ratio_gdp_real_ci, ymax = ratio_gdp_real + ratio_gdp_real_ci, fill = "Wealth Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario9, periods >=50), aes(x = periods, ymin = ratio_gdp_real - ratio_gdp_real_ci, ymax = ratio_gdp_real + ratio_gdp_real_ci, fill = "Wealth Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario10, periods >=50), aes(x = periods, ymin = ratio_gdp_real - ratio_gdp_real_ci, ymax = ratio_gdp_real + ratio_gdp_real_ci, fill = "Wealth Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario11, periods >=50), aes(x = periods, ymin = ratio_gdp_real - ratio_gdp_real_ci, ymax = ratio_gdp_real + ratio_gdp_real_ci, fill = "Wealth Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "GDP", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+```
+
+
+```{r, shock2_emissions}
+
+
+
+# Apply the calculations to each scenario
+scenarios_wealthtax <- lapply(scenarios_wealthtax, function(df) {
+  df$ratio_emissions <- df$emissions_Med / df_baseline$emissions_Med
+  
+  df$corr_scenario <- cor(df$emissions_Med, df_baseline$emissions_Med)
+  
+  df$ratio_emissions_sd <- abs(df$ratio_emissions) * sqrt(
+    (df$emissions_Mad / df$emissions_Med)^2 +
+    (df_baseline$emissions_Mad / df_baseline$emissions_Med)^2 - 
+    2 * df$corr_scenario * (df$emissions_Mad / df$emissions_Med) * (df_baseline$emissions_Mad / df_baseline$emissions_Med)
+  )
+  
+  df$ratio_emissions_ci <- 1.96 * (df$ratio_emissions_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_wealthtax[[1]]
+df_scenario7 <- scenarios_wealthtax[[2]]
+df_scenario8 <- scenarios_wealthtax[[3]]
+df_scenario9 <- scenarios_wealthtax[[4]]
+df_scenario10 <- scenarios_wealthtax[[5]]
+df_scenario11 <- scenarios_wealthtax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario7, aes(x = periods, y = ratio_emissions, color = "Wealth Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario8, aes(x = periods, y = ratio_emissions, color = "Wealth Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario9, aes(x = periods, y = ratio_emissions, color = "Wealth Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario10, aes(x = periods, y = ratio_emissions, color = "Wealth Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario11, aes(x = periods, y = ratio_emissions, color = "Wealth Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario7, periods >=50), aes(x = periods, ymin = ratio_emissions - ratio_emissions_ci, ymax = ratio_emissions + ratio_emissions_ci, fill = "Wealth Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario8, periods >=50), aes(x = periods, ymin = ratio_emissions - ratio_emissions_ci, ymax = ratio_emissions + ratio_emissions_ci, fill = "Wealth Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario9, periods >=50), aes(x = periods, ymin = ratio_emissions - ratio_emissions_ci, ymax = ratio_emissions + ratio_emissions_ci, fill = "Wealth Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario10, periods >=50), aes(x = periods, ymin = ratio_emissions - ratio_emissions_ci, ymax = ratio_emissions + ratio_emissions_ci, fill = "Wealth Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario11, periods >=50), aes(x = periods, ymin = ratio_emissions - ratio_emissions_ci, ymax = ratio_emissions + ratio_emissions_ci, fill = "Wealth Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "Aggregate Emissions", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+
+```
+
+
+```{r, shock2_unemployment_rate}
+
+
+# Apply the calculations to each scenario
+scenarios_wealthtax <- lapply(scenarios_wealthtax, function(df) {
+  df$ratio_unemployment_rate <- df$unemployment_rate_Med / df_baseline$unemployment_rate_Med
+  
+  df$corr_scenario <- cor(df$unemployment_rate_Med, df_baseline$unemployment_rate_Med)
+  
+  df$ratio_unemployment_rate_sd <- abs(df$ratio_unemployment_rate) * sqrt(
+    (df$unemployment_rate_Mad / df$unemployment_rate_Med)^2 +
+    (df_baseline$unemployment_rate_Mad / df_baseline$unemployment_rate_Med)^2 - 
+    2 * df$corr_scenario * (df$unemployment_rate_Mad / df$unemployment_rate_Med) * (df_baseline$unemployment_rate_Mad / df_baseline$unemployment_rate_Med)
+  )
+  
+  df$ratio_unemployment_rate_ci <- 1.96 * (df$ratio_unemployment_rate_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_wealthtax[[1]]
+df_scenario7 <- scenarios_wealthtax[[2]]
+df_scenario8 <- scenarios_wealthtax[[3]]
+df_scenario9 <- scenarios_wealthtax[[4]]
+df_scenario10 <- scenarios_wealthtax[[5]]
+df_scenario11 <- scenarios_wealthtax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario7, aes(x = periods, y = ratio_unemployment_rate, color = "Wealth Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario8, aes(x = periods, y = ratio_unemployment_rate, color = "Wealth Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario9, aes(x = periods, y = ratio_unemployment_rate, color = "Wealth Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario10, aes(x = periods, y = ratio_unemployment_rate, color = "Wealth Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario11, aes(x = periods, y = ratio_unemployment_rate, color = "Wealth Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario7, periods >=50), aes(x = periods, ymin = ratio_unemployment_rate - ratio_unemployment_rate_ci, ymax = ratio_unemployment_rate + ratio_unemployment_rate_ci, fill = "Wealth Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario8, periods >=50), aes(x = periods, ymin = ratio_unemployment_rate - ratio_unemployment_rate_ci, ymax = ratio_unemployment_rate + ratio_unemployment_rate_ci, fill = "Wealth Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario9, periods >=50), aes(x = periods, ymin = ratio_unemployment_rate - ratio_unemployment_rate_ci, ymax = ratio_unemployment_rate + ratio_unemployment_rate_ci, fill = "Wealth Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario10, periods >=50), aes(x = periods, ymin = ratio_unemployment_rate - ratio_unemployment_rate_ci, ymax = ratio_unemployment_rate + ratio_unemployment_rate_ci, fill = "Wealth Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario11, periods >=50), aes(x = periods, ymin = ratio_unemployment_rate - ratio_unemployment_rate_ci, ymax = ratio_unemployment_rate + ratio_unemployment_rate_ci, fill = "Wealth Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "Unemployment rate", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+         legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+```
+
+
+
+```{r, shock2_cpi}
+
+
+# Apply the calculations to each scenario
+scenarios_wealthtax <- lapply(scenarios_wealthtax, function(df) {
+  df$ratio_cpi <- df$cpi_Med / df_baseline$cpi_Med
+  
+  df$corr_scenario <- cor(df$cpi_Med, df_baseline$cpi_Med)
+  
+  df$ratio_cpi_sd <- abs(df$ratio_cpi) * sqrt(
+    (df$cpi_Mad / df$cpi_Med)^2 +
+    (df_baseline$cpi_Mad / df_baseline$cpi_Med)^2 - 
+    2 * df$corr_scenario * (df$cpi_Mad / df$cpi_Med) * (df_baseline$cpi_Mad / df_baseline$cpi_Med)
+  )
+  
+  df$ratio_cpi_ci <- 1.96 * (df$ratio_cpi_sd / sqrt(50))
+  
+  return(df)
+})
+
+# Assign the updated data frames back to their respective variables
+df_baseline <- scenarios_wealthtax[[1]]
+df_scenario7 <- scenarios_wealthtax[[2]]
+df_scenario8 <- scenarios_wealthtax[[3]]
+df_scenario9 <- scenarios_wealthtax[[4]]
+df_scenario10 <- scenarios_wealthtax[[5]]
+df_scenario11 <- scenarios_wealthtax[[6]]
+
+
+ggplot() +
+  geom_line(data = df_scenario7, aes(x = periods, y = ratio_cpi, color = "Wealth Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario8, aes(x = periods, y = ratio_cpi, color = "Wealth Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario9, aes(x = periods, y = ratio_cpi, color = "Wealth Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario10, aes(x = periods, y = ratio_cpi, color = "Wealth Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario11, aes(x = periods, y = ratio_cpi, color = "Wealth Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario7, periods >=50), aes(x = periods, ymin = ratio_cpi - ratio_cpi_ci, ymax = ratio_cpi + ratio_cpi_ci, fill = "Wealth Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario8, periods >=50), aes(x = periods, ymin = ratio_cpi - ratio_cpi_ci, ymax = ratio_cpi + ratio_cpi_ci, fill = "Wealth Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario9, periods >=50), aes(x = periods, ymin = ratio_cpi - ratio_cpi_ci, ymax = ratio_cpi + ratio_cpi_ci, fill = "Wealth Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario10, periods >=50), aes(x = periods, ymin = ratio_cpi - ratio_cpi_ci, ymax = ratio_cpi + ratio_cpi_ci, fill = "Wealth Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario11, periods >=50), aes(x = periods, ymin = ratio_cpi - ratio_cpi_ci, ymax = ratio_cpi + ratio_cpi_ci, fill = "Wealth Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "CPI", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = "none",
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+```
+
+
+```{r, shock2_taxes_wealth_to_gdp}
+
+
+
+ggplot() +
+  geom_line(data = df_scenario7, aes(x = periods, y = wealth_tax_to_gdp_Med, color = "Wealth Tax"), linetype = "dotted") +
+  geom_line(data = df_baseline, aes(x = periods, y = wealth_tax_to_gdp_Med, color = "Baseline"), alpha = 1) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y= "Wealth Tax over GDP", color = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = c(0.25,0.75),
+        legend.background = element_blank()) +
+  scale_color_manual(values = c(  "#2c2c2c", "#2c2c2c"),
+                     guide = guide_legend(override.aes = list(linetype = c("solid", "dotted"))))+
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+
+```
+
+```{r}
+
+
+df_scenario1 <- df_baseline
+
+scenario_names <- paste0("df_scenario", 1:11)
+
+# Função para extrair último valor de cada variável de interesse
+extract_average_values <- function(df_name) {
+  df <- get(df_name)
+  
+  data.frame(
+    scenario = df_name,
+    emissions_coefficient_Med = mean(df$emissions_coefficient_Med, na.rm = TRUE),
+    gdp_real_Med = mean(df$gdp_real_Med, na.rm = TRUE),
+    emissions_Med = mean(df$emissions_Med, na.rm = TRUE),
+    cpi_Med = mean(df$cpi_Med, na.rm = TRUE),
+    unemployment_rate_Med = mean(df$unemployment_rate_Med, na.rm = TRUE),
+    wage_share_Med = mean(df$wage_share_Med, na.rm = TRUE),
+    gini_hh_Med = mean(df$gini_hh_Med, na.rm = TRUE)
+  )
+}
+
+# Aplicar a função em todos os dataframes
+summary_df <- map_dfr(scenario_names, extract_average_values)
+
+# Transformar em formato longo para ordenar por variável
+ranking_df <- summary_df %>%
+  pivot_longer(-scenario, names_to = "variable", values_to = "value") %>%
+  group_by(variable) %>%
+  arrange(desc(value), .by_group = TRUE) %>%
+  mutate(rank = row_number()) %>%
+  ungroup()
+
+# Voltar para formato wide com rankings por variável
+ranking_wide <- ranking_df %>%
+  select(scenario, variable, rank) %>%
+  pivot_wider(names_from = variable, values_from = rank)
+
+# Exibir
+print(ranking_wide)
+
+write_xlsx(ranking_wide, "ranking.xlsx")
+
+ranking_wide$scenario_name <- case_when(
+  ranking_wide$scenario == "df_scenario1" ~ "BAU",
+  ranking_wide$scenario == "df_scenario2" ~ "CT",
+  ranking_wide$scenario == "df_scenario3" ~ "CT + RPL",
+  ranking_wide$scenario == "df_scenario4" ~ "CT + PS",
+  ranking_wide$scenario == "df_scenario5" ~ "CT + RS",
+  ranking_wide$scenario == "df_scenario6" ~ "CT + PP",
+  ranking_wide$scenario == "df_scenario7" ~ "WT",
+  ranking_wide$scenario == "df_scenario8" ~ "WT + RLP",
+  ranking_wide$scenario == "df_scenario9" ~ "WT + PS",
+  ranking_wide$scenario == "df_scenario10" ~ "WT + RS",
+  ranking_wide$scenario == "df_scenario11" ~ "WT + PP"
+)
+
+```
+
+
+```{r, taxes}
+
+ggplot() +
+  geom_line(data = df_scenario2, aes(x = periods, y = CO2_tax_Med, color = "Baseline"), alpha = 1) +
+  geom_ribbon(data = df_scenario2, aes(x = periods, ymin = CO2_tax_Med - 1.96 * CO2_tax_Mad / sqrt(50), 
+                                      ymax = CO2_tax_Med + 1.96 * CO2_tax_Mad / sqrt(50), fill = "Baseline"), 
+              alpha = 0.3, show.legend = FALSE) +
+  scale_color_manual(values = c("Baseline" = "#FF7276")) +
+  scale_fill_manual(values = c("Baseline" = "#FF7276")) +
+  labs(x = "Time", y = "CO2 tax", color = "", fill = "") +
+  theme(
+    legend.position = "none",
+    panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+    panel.background = element_rect(fill = "white")
+  )
+
+
+ggplot() +
+  geom_line(data = df_scenario7, aes(x = periods, y = wealth_tax_rate_Med, color = "Baseline"), alpha = 1) +
+  geom_ribbon(data = df_scenario7, aes(x = periods, ymin = wealth_tax_rate_Med - 1.96 * wealth_tax_rate_Mad / sqrt(50), 
+                                      ymax = wealth_tax_rate_Med + 1.96 * wealth_tax_rate_Mad / sqrt(50), fill = "Baseline"), 
+              alpha = 0.3, show.legend = FALSE) +
+  scale_color_manual(values = c("Baseline" = "#3366ff")) +
+  scale_fill_manual(values = c("Baseline" = "#3366ff")) +
+  labs(x = "Time", y = "Wealth tax", color = "", fill = "") +
+  theme(
+    legend.position = "none",
+    panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+    panel.background = element_rect(fill = "white"))
+    
+ggplot() +
+  geom_line(data = df_scenario2, aes(x = periods, y = CO2_tax_Med, color = "Carbon Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario3, aes(x = periods, y = CO2_tax_Med, color = "Carbon Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario4, aes(x = periods, y = CO2_tax_Med, color = "Carbon Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario5, aes(x = periods, y = CO2_tax_Med, color = "Carbon Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario6, aes(x = periods, y = CO2_tax_Med, color = "Carbon Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario2, periods >=50), aes(x = periods, ymin = CO2_tax_Med - CO2_tax_Mad, ymax = CO2_tax_Med + CO2_tax_Mad, fill = "Carbon Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario3, periods >=50), aes(x = periods, ymin = CO2_tax_Med - CO2_tax_Mad, ymax = CO2_tax_Med + CO2_tax_Mad, fill = "Carbon Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario4, periods >=50), aes(x = periods, ymin = CO2_tax_Med - CO2_tax_Mad, ymax = CO2_tax_Med + CO2_tax_Mad, fill = "Carbon Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario5, periods >=50), aes(x = periods, ymin = CO2_tax_Med - CO2_tax_Mad, ymax = CO2_tax_Med + CO2_tax_Mad, fill = "Carbon Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario6, periods >=50), aes(x = periods, ymin = CO2_tax_Med - CO2_tax_Mad, ymax = CO2_tax_Med + CO2_tax_Mad, fill = "Carbon Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "Carbon tax rate", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = c(0.5, 0.7),
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+    
+    ggplot() +
+  geom_line(data = df_scenario7, aes(x = periods, y = wealth_tax_rate_Med, color = "Wealth Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario8, aes(x = periods, y = wealth_tax_rate_Med, color = "Wealth Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario9, aes(x = periods, y = wealth_tax_rate_Med, color = "Wealth Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario10, aes(x = periods, y = wealth_tax_rate_Med, color = "Wealth Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario11, aes(x = periods, y = wealth_tax_rate_Med, color = "Wealth Tax and green public procurement"), linetype = "longdash") +
+  geom_ribbon(data = subset(df_scenario7, periods >=50), aes(x = periods, ymin = wealth_tax_rate_Med - wealth_tax_rate_Mad, ymax = wealth_tax_rate_Med + wealth_tax_rate_Mad, fill = "Wealth Tax"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario8, periods >=50), aes(x = periods, ymin = wealth_tax_rate_Med - wealth_tax_rate_Mad, ymax = wealth_tax_rate_Med + wealth_tax_rate_Mad, fill = "Wealth Tax and green public lab"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario9, periods >=50), aes(x = periods, ymin = wealth_tax_rate_Med - wealth_tax_rate_Mad, ymax = wealth_tax_rate_Med + wealth_tax_rate_Mad, fill = "Wealth Tax and green price subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario10, periods >=50), aes(x = periods, ymin = wealth_tax_rate_Med - wealth_tax_rate_Mad, ymax = wealth_tax_rate_Med + wealth_tax_rate_Mad, fill = "Wealth Tax and green research subsidy"), alpha = 0.3, show.legend = FALSE) +
+  geom_ribbon(data = subset(df_scenario11, periods >=50), aes(x = periods, ymin = wealth_tax_rate_Med - wealth_tax_rate_Mad, ymax = wealth_tax_rate_Med + wealth_tax_rate_Mad, fill = "Wealth Tax and green public procurement"), alpha = 0.3, show.legend = FALSE) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time", y = "CPI", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA),
+        axis.title.x = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = c(0.5,0.3),
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  geom_vline(xintercept = 50, linetype = "dashed", alpha = 0.5)
+
+
+```
+  ) 
+
+```
+
+```{r, legend}
+
+
+
+ggplot() +
+  geom_line(data = df_scenario2, aes(x = periods, y = ratio_cpi, color = "Carbon Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario3, aes(x = periods, y = ratio_cpi, color = "Carbon Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario4, aes(x = periods, y = ratio_cpi, color = "Carbon Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario5, aes(x = periods, y = ratio_cpi, color = "Carbon Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario6, aes(x = periods, y = ratio_cpi, color = "Carbon Tax and green public procurement"), linetype = "longdash") +
+  theme(legend.position = "bottom") +
+  labs(x = "", y = "", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0, fill = NA),
+        axis.text.x = element_text(size = 0),
+        axis.text.y = element_text(size = 0),
+        legend.key.width  = unit(4, "cm"),  # make line long
+        legend.key.height = unit(0.6, "cm"), # keep it thin
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = c(0.5, 0.5),
+        axis.ticks = element_blank(),
+        legend.text  = element_text(size = 14),
+        legend.spacing.y = unit(2, "cm"),
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  scale_y_continuous(limits = c(10, 100))+
+  guides(color = guide_legend(
+    override.aes = list(linewidth = 1.6)
+  ))
+
+
+ggplot() +
+  geom_line(data = df_scenario7, aes(x = periods, y = ratio_cpi, color = "Wealth Tax"), linetype = "dotted") +
+  geom_line(data = df_scenario8, aes(x = periods, y = ratio_cpi, color = "Wealth Tax and green public lab"), linetype = "dashed") +
+  geom_line(data = df_scenario9, aes(x = periods, y = ratio_cpi, color = "Wealth Tax and green price subsidy"), linetype = "twodash") +
+  geom_line(data = df_scenario10, aes(x = periods, y = ratio_cpi, color = "Wealth Tax and green research subsidy"), linetype = "dotdash") +
+  geom_line(data = df_scenario11, aes(x = periods, y = ratio_cpi, color = "Wealth Tax and green public procurement"), linetype = "longdash") +
+  theme(legend.position = "bottom") +
+  labs(x = "", y = "", color = "", fill = "") +
+  theme(panel.border = element_rect(color = "black", size = 0, fill = NA),
+        axis.text.x = element_text(size = 0),
+        axis.text.y = element_text(size = 0),
+        legend.key.width  = unit(4, "cm"),  # make line long
+        legend.key.height = unit(0.6, "cm"), # keep it thin
+        panel.background = element_rect(fill = "white"),
+        legend.key = element_blank(),
+        legend.position = c(0.5, 0.5),
+        axis.ticks = element_blank(),
+        legend.text  = element_text(size = 14),
+        legend.spacing.y = unit(2, "cm"),
+        legend.background = element_blank()) +
+  scale_color_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000"),
+                     guide = guide_legend(override.aes = list(linetype = c("dotted", "dashed", "twodash", "dotdash", "longdash")))) +
+  scale_fill_manual(values = c("#45ff66", "#EB52ff", "#3366ff", "#FFAB4D", "#ff0000")) +
+  scale_y_continuous(limits = c(1.5, 100))+
+  guides(color = guide_legend(
+    override.aes = list(linewidth = 1.6)
+  ))
+
+```
+
+
+
+```{r, inequalit_trend}
+
+load("baseline_26.RData")
+
+df_baseline <- df_baseline %>%
+mutate(
+consumption_workers_pp = propensity_consume_wage_Med * (wage_bill_Med - wage_taxes_Med) / labor_employed_Med,
+consumption_capitalists_pp = (capitalists_income_Med - dividends_taxes_Med) / capitalists_Med,
+ratio_consumption = consumption_capitalists_pp/consumption_workers_pp
+)
+
+
+df_baseline$periods <- 1:nrow(df_baseline)
+
+
+ggplot(data = df_baseline) +
+  geom_line(aes(x = periods, y = consumption_workers_pp, color = "Workers' per capita consumption"),linewidth = 0.3, na.rm = TRUE) +
+  geom_line(aes(x = periods, y = consumption_capitalists_pp, color= "Capitalists' per capita consumption"),linetype = "dashed", linewidth = 0.4, na.rm = TRUE) +
+  theme(legend.position = "bottom") + 
+  labs(x = "Time", y= "Value", color = "") +
+  theme(
+    panel.border = element_rect(color = "black", linewidth = 0.5, fill = NA),
+    panel.background = element_rect(fill = "white"),
+    legend.key = element_blank(),
+    legend.position = c(0.45, 0.9),
+    legend.background = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.text.x  = element_text(size = 14),
+    axis.text.y  = element_text(size = 14),
+    legend.text  = element_text(size = 17)
+  ) +
+  scale_color_manual(values = c( "#8b8683" ,"#3366ff"),
+                     guide = guide_legend(override.aes = list(linetype = c("dashed", "solid"))))
+                    
+ggsave("plots_green_files/consumption.jpg")                 
+                    
+ggplot(data = df_baseline) +
+  geom_line(
+    aes(x = periods, y = ratio_consumption,
+        color = "Ratio of per capita consumption (capitalists over workers)"),
+    linewidth = 0.3, na.rm = TRUE
+  ) +
+  labs(x = "Time", y = "Ratio", color = "") +
+  scale_color_manual(values = c("#3366ff"),
+                     guide = guide_legend(override.aes = list(linetype = "solid"))) +
+  theme(
+    panel.border = element_rect(color = "black", linewidth = 0.5, fill = NA),
+    panel.background = element_rect(fill = "white"),
+    legend.key = element_blank(),
+    legend.position = c(0.45, 0.9),
+    legend.background = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.text.x  = element_text(size = 14),
+    axis.text.y  = element_text(size = 14),
+    legend.text  = element_text(size = 14)
+  )
+
+
+ggsave("plots_green_files/ratio_consumption.jpg")  
+                     
+```
